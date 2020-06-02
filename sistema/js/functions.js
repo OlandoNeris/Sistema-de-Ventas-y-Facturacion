@@ -891,11 +891,18 @@ $(document).ready(function(){
      });
 
 
+
+
+
+
 }); // FIN READY DOCUMENT 
 
 
 // ---- BLOQUE DE FUNCIONES ---------------
 
+function actualizarMedidaUso(unidadUso){
+    $('#UnidadMedidaModal').val(unidadUso);
+}
 
 function agregarInsumoReceta(){
 

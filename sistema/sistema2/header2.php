@@ -45,14 +45,18 @@
 
 							include '../../coneccion.php';
 
-							$query = mysqli_query($conn,"SELECT p.codproducto as idInsumo, p.descripcion as nombre, p.unidad_medida as unidades_medida 
-															 FROM producto as p WHERE p.tipo_producto = 4 AND p.estado = 1");
+							$query = mysqli_query($conn,"SELECT p.codproducto as idInsumo, p.descripcion as nombre, um.descripcion as unidadUso  
+														 FROM producto as p INNER JOIN unidades_medida as um ON p.unidad_medida = um.id 
+														 WHERE p.tipo_producto = 4 AND p.estado = 1");
 							mysqli_close($conn);
 							$result = mysqli_num_rows($query);
+							
+							$arrayUnidad = mysqli_fetch_array($query);
+							$unidadUsoModal =  $arrayUnidad["unidadUso"];
 
 							?>
 
-							<select class="custom-select" id="inputGroupSelect02">
+							<select class="custom-select" id="SelectAddInsumo" onchange="actualizarMedidaUso('<?php echo $unidadUsoModal; ?>');">
 								<option selected>Seleccione el Insumo</option>
 							<?php 
 
@@ -60,13 +64,15 @@
 								{
 									while ($insumo = mysqli_fetch_array($query))
 									{
+										
 							?>	
-								<option value="<?php echo $insumo["idInsumo"]; ?>"><?php echo $insumo["nombre"]; ?></option>
+								<option  value="<?php echo $insumo["idInsumo"]; ?>"><?php echo $insumo["nombre"]; ?></option>
 							<?php
 									}
 								}
 
-							?>							
+							?>
+				
 							</select>
 
       				</div>
@@ -74,7 +80,7 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text" id="inputGroup-sizing-default">Unidad de Medida</span>
 						</div>
-						<input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" disabled>
+						<input type="text" id="UnidadMedidaModal" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" disabled>
 						</div>
 						<div class="input-group mb-3">
 						<div class="input-group-prepend">
