@@ -890,6 +890,15 @@ $(document).ready(function(){
  
      });
 
+     // AGREGAR FUNCIONALIDAD AL BOTON DEL MODAL 
+     $('#agregarInsumoLista').click(function (e){
+        e.preventDefault;
+        var codigoInsumo = $('#SelectAddInsumo').val();
+        var cantidadInsumo = $('#cantidadInsumoModal').val();
+
+        console.log(codigoInsumo + cantidadInsumo);
+
+    });
 
 
 

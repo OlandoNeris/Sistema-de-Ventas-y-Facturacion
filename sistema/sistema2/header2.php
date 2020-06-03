@@ -86,11 +86,11 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text" id="inputGroup-sizing-default">Cantidad A Usar</span>
 						</div>
-						<input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+						<input type="text" id="cantidadInsumoModal" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" require>
 						</div>
                     <div class="modal-footer ">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-exit"></i>Cerrar</button>
-                        <button type="button" class="btn btn-primary"><i class="fas fa-plus"></i>  Agregar</button>
+                        <button type="button" id="agregarInsumoLista" class="btn btn-primary"><i class="fas fa-plus"></i>  Agregar</button>
                     </div>
                 </div>
             </div>
