@@ -9,6 +9,49 @@
 
 if (!empty($_POST)) {
 
+	// AGREGAR INSUMO A LA RECETA 
+	if($_POST['action'] == 'agregarInsumoReceta'){
+
+		$idReceta = $_POST['idReceta'];
+		$idInsumo = $_POST['idInsumo'];
+		$cantidad = $_POST['cantidad'];
+
+		$detalleTabla = '';
+		$query_agregarInsumo = mysqli_query($conn,"CALL addIngredienteReceta('$idReceta','$idInsumo','$cantidad')");
+		$resultado = mysqli_num_rows($query_agregarInsumo);
+
+		if($resultado > 0){
+			
+			while($datos = mysqli_fetch_assoc($query_agregarInsumo)){
+
+				$detalleTabla .= '
+								<tr>
+									<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['idInsumo'].'"></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['nombreInsumo'].'</font></font></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidadMedida'].'</font></font></td>
+									<td>
+										<div class="container d-inline d-center">
+											<button type="button" class="btn btn-outline-info ml-5" onclick="preventDefault(); editarInsumoNuevaReceta('.$datos['idInsumo'].');"> <i class="fas fa-edit" ></i>   Editar</button>
+											<button type="button" class="btn btn-outline-danger ml-3" onclick="preventDefault(); eliminarInsumoNuevaReceta('.$datos['idInsumo'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
+										</div>
+									</td>
+								</tr>' ;
+			}
+
+			echo json_encode($detalleTabla,JSON_UNESCAPED_UNICODE); 
+
+		}else{
+			echo "Error al Ejecutar el Precedimiento almacenado! ";
+		}
+		
+		exit;
+
+	}
+
+
+
+
 	// GUARDAR CABECERA DEL PRODUCTO ELABORADO
 
 	if($_POST['action'] == 'guardarNuevoProdElaborado'){

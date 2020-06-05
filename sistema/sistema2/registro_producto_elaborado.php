@@ -53,7 +53,7 @@
 			    <div id="msjErrorNuevaReceta" class="alert"><?php echo isset($alert) ? $alert : '';?></div>
           
           <input type="hidden" id="idUsuario" name="idUsuario" value="<?php echo $idUsuario; ?>" > 
-          <input type="hidden" id="idReceta" Nueva=idReceta name="idReceta" value="" >
+          <input type="hidden" id="idReceta"  name="idReceta" value="" >
 
         	<div class="form-row">
 				    <div class="form-group col-md-4">
@@ -93,18 +93,8 @@
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">Manteca</font></font></td>
-                        <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">300</font></font></td>
-                        <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Gramos</font></font></td>
-                        <td>
-                            <div class="container d-inline d-center">
-                            	<button type="button" class="btn btn-outline-info ml-5"> <i class="fas fa-edit"></i>   Editar</button>
-								              <button type="button" class="btn btn-outline-danger ml-3"> <i class="fas fa-trash"></i>    Eliminar</button>															
-							              </div>
-                        </td>
-                    </tr>
+                <tbody id="listaIngredientesNuevaReceta">
+                <!--  FILAS ARMADAS A TRAVEZ DE AJAX-->
                 </tbody>
             </table>
         </div>
@@ -146,7 +136,7 @@
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="">
                     <tr>
                         <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">Manteca</font></font></td>
                         <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">300</font></font></td>

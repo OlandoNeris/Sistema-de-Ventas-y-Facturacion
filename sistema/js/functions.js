@@ -629,62 +629,6 @@ $(document).ready(function(){
 
     // AGREGAR PRODUCTO AL DETALLE de RECETA
 
-    $('#add_insumo_receta').click(function(e) {
-        /* Act on the event */
-        e.preventDefault();
-
-        if ($('#txt_cant_insumo').val() > 0) 
-        {
-            var codInsumo   = $('#txt_cod_insumo').val();
-            var cantidad    = $('#txt_cant_insumo').val();
-            var unidadUso   = $('#unidadUso').val();
-            var idReceta    = $('#idReceta').val();
-            var action      = 'addInsumoReceta';
-
-            $.ajax({
-                url: 'ajax.php',
-                type: 'POST',
-                async: true,
-                data: {action:action, insumo:codInsumo,unidadUso:unidadUso,receta:idReceta, cantidad:cantidad},
-
-                success: function(response){
-
-                    console.log(response);
-                    
-                    if (response != 'error') 
-                    {
-                        var info = JSON.parse(response);
-
-                        // asignar el detalle a las clases en el formulario de la factura
-
-                        $('#detalle_receta').html(info.detalle);
-
-                        // vaciar los campos para ingresar un nuevo producto a la lista 
-
-                        $('#txt_cod_insumo').val(''); 
-                        $('#txt_nom_insumo').val('');
-                        $('#txt_cant_insumo').val('');
-                        $('#txt_cant_insumo').attr('disabled','disabled');
-                        $('#unidadUso').val('');
-
-                        // ocultar boton agregar
-                        $('#add_insumo_receta').slideUp();
- 
-
-                    }else{
-                        console.log('sin datos');
-                    }
-                    viewEmitir();
-                },
-
-                error: function(response){
-                    
-                }
-
-            });
-            
-        }
-    });
 
     // -----------------------------------------------------------------------------------
 
@@ -890,14 +834,59 @@ $(document).ready(function(){
  
      });
 
+    // RESETEAR MODAL DESPUES DE GUARDAR EL INSUMO EN LA RECETA
+
+    $('#btnAgregarIngredienteNuevoProdElaborado').click(function (e){
+        
+        $('#staticBackdropLabel').html('Agregar Insumo a la Receta ');
+        $('#agregarInsumoLista').slideDown();
+        $('#cantidadInsumoModal').attr('disabled',false);
+        $('#cantidadInsumoModal').val();
+        $('#SelectAddInsumo').attr('disabled',false);
+        
+        
+    });
+
+     
+
      // AGREGAR FUNCIONALIDAD AL BOTON DEL MODAL 
      $('#agregarInsumoLista').click(function (e){
         e.preventDefault;
+
+
         var codigoInsumo = $('#SelectAddInsumo').val();
         var cantidadInsumo = $('#cantidadInsumoModal').val();
+        var idReceta= $('#idReceta').val();
 
-        console.log(codigoInsumo + cantidadInsumo);
+        var action = 'agregarInsumoReceta';
+     
+    
+        $.ajax({
+            url: 'ajax.php',
+            type: 'POST',
+            async: true,
+            data: { action: action, idReceta:idReceta, idInsumo:codigoInsumo, cantidad:cantidadInsumo },    
+            
+            success: function (response) {
+            
+                if (response != 'Error') {
+     
+                    var info = JSON.parse(response);
+                   
+                    $('#listaIngredientesNuevaReceta').html(info);
 
+                    $('#agregarInsumoLista').slideUp();
+                    $('#cantidadInsumoModal').attr('disabled',true);
+                    $('#SelectAddInsumo').attr('disabled',true);
+                    
+                    $('#staticBackdropLabel').html('Ingrediente Agregado con Exito! ');
+    
+                } else {
+    
+                    console.log("Algo a Salido mal...");
+                } 
+            },
+        });
     });
 
 
@@ -908,6 +897,7 @@ $(document).ready(function(){
 
 
 // ---- BLOQUE DE FUNCIONES ---------------
+
 
 function actualizarMedidaUso(unidadUso){
     $('#UnidadMedidaModal').val(unidadUso);
