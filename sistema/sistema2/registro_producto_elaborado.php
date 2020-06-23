@@ -45,7 +45,7 @@
       </form>
     </div>
      
-    
+    <!-- FORMULARIO PARA CREAR UN NUEVO PRODUCTO ELABORADO -->
     <div id="form_agregar_receta" action="" name="guardarCabeceraReceta"  class="container pr-5 pl-5">
 
         <form method="post" enctype="multipart/form-data">
@@ -100,6 +100,10 @@
         </div>
     </div>
 
+
+
+
+    <!-- FORMULARIO PARA EDITAR UNA RECETA EXISTENTE -->
     <div id="form_editar_receta"  class="container pr-5 pl-5">
 
         <form action="" method="post" enctype="multipart/form-data">

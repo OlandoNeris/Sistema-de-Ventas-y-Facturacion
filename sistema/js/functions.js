@@ -795,7 +795,6 @@ $(document).ready(function(){
             console.log("no action");
         } 
 
-
     }); 
 
     // VALIDAR PRECIO POSITIVO form nuevo producto
@@ -889,6 +888,7 @@ $(document).ready(function(){
         });
     });
 
+    
 
 
 
@@ -897,6 +897,39 @@ $(document).ready(function(){
 
 
 // ---- BLOQUE DE FUNCIONES ---------------
+
+function eliminarInsumoNuevaReceta(idInsumo, idReceta){
+
+    var action = 'eliminarInsumoNuevaReceta';
+    $.ajax({
+        url: 'ajax.php',
+        type: 'POST',
+        async: true,
+        data: { action: action, idReceta:idReceta, idInsumo:idInsumo },    
+        
+        success: function (response) {
+
+            if (response != 'Sin Datos') {
+                
+                console.log(response);
+                
+                           
+                var info = JSON.parse(response);
+               
+                $('#listaIngredientesNuevaReceta').html('');
+                $('#listaIngredientesNuevaReceta').html(info);
+
+
+            } else {
+
+                $('#listaIngredientesNuevaReceta').html('');
+            } 
+        },
+    });
+
+
+}
+
 
 
 function actualizarMedidaUso(unidadUso){

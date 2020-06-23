@@ -29,8 +29,8 @@
 		</div>		
 	</div>
 
-	<div class="modalAddInsumo">
-	< !--Modal Agregar Insumo a la Receta-- >
+	<div class="modalAddInsumoNuevaReceta">
+		<!-- Modal Agregar Insumo a la Receta -->
         <div class="modal fade w-60 " id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -96,4 +96,47 @@
             </div>
         </div>
 
-</div>
+	</div>
+
+	<div class="modalEditarInsumo">
+		<!-- Modal Editar cantidad de  Insumo en la Receta -->
+        <div class="modal fade w-60 " id="staticBackdrop2" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+						<div class="alert alert-secondary" role="alert">
+							<h5 class="modal-title " id="staticBackdropLabel2">Actualizar Cantidad de Insumo en la Receta</h5>
+						</div>					
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="inputGroup-sizing-default">Insumo: </span>
+							</div>
+							<input type="text" id="NombreInsumoEditarNuevaR" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" disabled>
+						</div>
+
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="inputGroup-sizing-default">Unidad de Medida</span>
+							</div>
+							<input type="text" id="UnidadMedidaModal" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" disabled>
+						</div>
+
+						<div class="input-group mb-3">
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="inputGroup-sizing-default">Cantidad A Usar</span>
+							</div>
+							<input type="text" id="cantidadInsumoModal" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" require>
+						</div>
+
+						<div class="modal-footer ">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-exit"></i>Cerrar</button>
+							<button type="button" id="agregarInsumoLista" class="btn btn-primary"><i class="fas fa-plus"></i>  Actualizar</button>
+						</div>
+                </div>
+            </div>
+        </div>
+
+	</div>
+

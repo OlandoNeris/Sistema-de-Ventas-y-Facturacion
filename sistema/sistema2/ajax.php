@@ -9,6 +9,43 @@
 
 if (!empty($_POST)) {
 
+	// ELIMINAR INSUMO DE LA LISTA DE INSUMOS DEL FOMULARIO NUEVO PRODUCTO ELABORADO
+	if($_POST['action'] == 'eliminarInsumoNuevaReceta'){
+		
+		$idReceta = $_POST['idReceta'];
+		$idInsumo = $_POST['idInsumo'];
+
+		$queryDelete = mysqli_query($conn,"CALL eliminarInsumoNuevaReceta('$idReceta','$idInsumo')");
+
+		$resultado = mysqli_num_rows($queryDelete);
+
+		$detalleTabla = '';
+
+		if($resultado > 0){
+	
+			while($datos = mysqli_fetch_assoc($queryDelete)){
+
+				$detalleTabla .= '
+								<tr>
+									<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['idInsumo'].'"></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['nombreInsumo'].'</font></font></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidadMedida'].'</font></font></td>
+									<td>
+										<div class="container d-inline d-center">
+											<button type="button" class="btn btn-outline-danger ml-6 " onclick="eliminarInsumoNuevaReceta('.$datos['idInsumo'].','.$datos['recetaId'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
+										</div>
+									</td>
+								</tr>' ;
+			}
+
+			echo json_encode($detalleTabla,JSON_UNESCAPED_UNICODE); 
+
+		}else{
+			echo 'Sin Datos';
+		}
+	}
+
 	// AGREGAR INSUMO A LA RECETA 
 	if($_POST['action'] == 'agregarInsumoReceta'){
 
@@ -32,8 +69,7 @@ if (!empty($_POST)) {
 									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidadMedida'].'</font></font></td>
 									<td>
 										<div class="container d-inline d-center">
-											<button type="button" class="btn btn-outline-info ml-5" onclick="preventDefault(); editarInsumoNuevaReceta('.$datos['idInsumo'].');"> <i class="fas fa-edit" ></i>   Editar</button>
-											<button type="button" class="btn btn-outline-danger ml-3" onclick="preventDefault(); eliminarInsumoNuevaReceta('.$datos['idInsumo'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
+											<button type="button" class="btn btn-outline-danger ml-6 " onclick="eliminarInsumoNuevaReceta('.$datos['idInsumo'].','.$datos['recetaId'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
 										</div>
 									</td>
 								</tr>' ;
