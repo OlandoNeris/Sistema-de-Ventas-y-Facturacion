@@ -39,7 +39,7 @@
     <div   class="form_opciones_producto  container pr-5 pl-5">
       <form class="form-inline">        
         <div class="form-group mx-sm-3 mb-2">
-          <input type="text" class="form-control buscar_prod_elaborado" onclick="mostrarFormEditarReceta();"  placeholder=" Buscar Receta... "> 
+          <input type="text" id="buscar_prod_elaborado" class="form-control buscar_prod_elaborado" onclick="mostrarFormEditarReceta();"  placeholder=" Buscar Receta... "> 
         </div>
         <button type="button" class="btn btn-primary mb-2 ml-5" onclick="mostrarFormRecetaNueva();"><i class="fas fa-plus" ></i> Añadir Nueva Receta</button>
       </form>
@@ -108,28 +108,34 @@
 
         <form action="" method="post" enctype="multipart/form-data">
         	<h1 class="h3 text-center">Editar Producto Elaborado </h1> 
-			    <div class="alert"><?php echo isset($alert) ? $alert : '';?></div>
+			    <div class="alert" id="msj_editar_receta"><?php echo isset($alert) ? $alert : '';?></div>
 			
         	<div class="form-row">
 				    <div class="form-group col-md-4">
-              <label for="nombre_prod">Nombre</label>
-              <input type="text" class="form-control" name="nombre_prod" id="nombre_prod" placeholder="Nombre del Producto" required> 
+              <label for="nombre_receta_editar">Nombre</label>
+              <input type="text" class="form-control" name="nombre_receta_editar" id="nombre_receta_editar" placeholder="Nombre del Producto" required disabled> 
 				    </div>
 
 				    <div class="form-group col-md-4">
-              <label for="precio_prod">Precio</label>
-              <input type="number" class="form-control" name="precio_prod" id="precio_prod" placeholder="Precio del Producto" required> 
+              <label for="precio_receta_editar">Precio</label>
+              <input type="number" class="form-control" name="precio_receta_editar" id="precio_receta_editar" placeholder="Precio del Producto" required disabled>  
             </div>
 
             <div class="form-group col-md-4">
-              <button type="submit" class="btn btn-primary font-bold mt-5 ml-3 "><i class="fa fa-save"></i> Guardar Producto</button>
+              <button type="submit" class="btn btn-primary font-bold mt-5 ml-3 " id="actualizar_receta" disabled><i class="fas fa-sync-alt"></i> Actualizar</button>
             </div>
+
+            <div class="form-group col-md-12">
+              <label for="descrip_receta_editar">Descripcion / Observaciones</label>
+              <input type="text" class="form-control" name="descrip_receta_editar" id="descrip_receta_editar" placeholder="Ingrese una breve Descripcion del Producto..." required disabled> 
+				    </div>
+
        		</div> 
 		    </form>
 
         <div class="alert alert-primary mt-1 mb-1" role="alert">
             Lista de Ingredientes
-            <button type="button" class="btn btn-info ml-5"><i class="fa fa-plus"></i> Agregar Ingrediente</button>
+            <button type="button" class="btn btn-info ml-5" id="add_ingrediente_editar_receta" disabled><i class="fa fa-plus"></i> Agregar Ingrediente</button>
 			  </div>
             <table class="table table-striped table-hovertext-center p-4">
                 <thead>
@@ -140,18 +146,8 @@
                         <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="">
-                    <tr>
-                        <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">Manteca</font></font></td>
-                        <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">300</font></font></td>
-                        <td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Gramos</font></font></td>
-                        <td>
-                            <div class="container d-inline d-center">
-                            	<button type="button" class="btn btn-outline-info ml-5"> <i class="fas fa-edit"></i>   Editar</button>
-								              <button type="button" class="btn btn-outline-danger ml-3"> <i class="fas fa-trash"></i>    Eliminar</button>															
-							              </div>
-                        </td>
-                    </tr>
+                <tbody id="lista_insumo_editar_receta">
+                <!-- FILAS ARMADAS A TRAVEZ DE AJAX -->
                 </tbody>
             </table>
         </div>

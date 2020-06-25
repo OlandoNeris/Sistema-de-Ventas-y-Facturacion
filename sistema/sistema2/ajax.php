@@ -9,6 +9,93 @@
 
 if (!empty($_POST)) {
 
+	// BUSCAR RECETA PARA EDITAR 
+
+		// 	BUSCAR RECETAR PARA EDITAR EN FORMULARIO DE EDICION DE RECETAS
+
+		if ($_POST['action'] == 'buscarReceta') 
+		{	
+	
+			if (!empty($_POST['nombreReceta']))
+			{
+	
+				$nombreReceta = $_POST['nombreReceta'];
+	
+				$query = mysqli_query($conn,"SELECT * FROM receta as r WHERE r.estado = 1 AND r.nombre LIKE '%$nombreReceta'");
+				mysqli_close($conn);
+	
+				$resultado = mysqli_num_rows($query);
+			
+				$datos = '';
+				
+				if ($resultado > 0) 
+				{
+					$datos = mysqli_fetch_assoc($query);
+				}else{
+	
+					$datos = 0;
+				}
+	
+				echo json_encode($datos, JSON_UNESCAPED_UNICODE);
+			}
+	
+			exit;
+		} 
+
+
+		// AGREGAR PRODUCTO AL DETALLE  
+		if ($_POST['action'] == 'buscarDetalleRecetaEditar')
+		{
+	
+			if (empty($_POST['idReceta'])) {
+				echo 'error';
+			}else{
+	
+				$idReceta = $_POST['idReceta'];
+
+				$query_listaIngredientes = mysqli_query($conn,"SELECT p.codproducto as idInsumo, p.descripcion as nombreInsumno, dr.cantidad, um.descripcion as medida 
+																FROM detalle_receta dr INNER JOIN producto as p ON dr.cod_insumo = p.codproducto 
+																INNER JOIN unidades_medida as um on p.unidad_medida = um.id 
+																WHERE dr.id_receta = '$idReceta'");
+				$result = mysqli_num_rows($query_listaIngredientes);
+			
+				$detalleTabla = '';
+				$arrayDatos   = array();   // para guardar los datos del detalle
+	
+				if ($result > 0) 
+				{
+	
+					// armado de las filas del detalle de la receta
+	
+					while ($datos = mysqli_fetch_assoc($query_listaIngredientes)) 
+					{
+	
+						$detalleTabla .= '<tr>
+											<td style="display:none;">'.$datos['idInsumo'].'</td>
+											<td colspan="1">'.$datos['nombreInsumno'].'</td>
+											<td class="textcenter">'.$datos['cantidad'].'</td>
+											<td class="textcenter">'.$datos['medida'].'</td>
+											<td class="">
+												<a href="#" class="link_delete" onclick="event.preventDefault(); del_insumo_receta('.$datos['idInsumo'].','.$idReceta.');"><i class="fas fa-trash-alt"></i></a>
+											</td>
+										</tr>';
+					// fin while	
+					}
+	
+	
+					$arrayDatos['detalle'] = $detalleTabla;
+	
+	
+					echo json_encode($arrayDatos,JSON_UNESCAPED_UNICODE);
+	
+				}else{
+					echo 'error';
+				}
+				mysqli_close($conn);
+			}
+			exit;
+		}
+
 	// ELIMINAR INSUMO DE LA LISTA DE INSUMOS DEL FOMULARIO NUEVO PRODUCTO ELABORADO
 	if($_POST['action'] == 'eliminarInsumoNuevaReceta'){
 		
@@ -85,9 +172,6 @@ if (!empty($_POST)) {
 
 	}
 
-
-
-
 	// GUARDAR CABECERA DEL PRODUCTO ELABORADO
 
 	if($_POST['action'] == 'guardarNuevoProdElaborado'){
@@ -141,7 +225,9 @@ if (!empty($_POST)) {
 	} 
 
 
-		// AGREGAR PRODUCTO AL DETALLE TEMPORAL 
+
+
+	// AGREGAR PRODUCTO AL DETALLE TEMPORAL 
 	if ($_POST['action'] == 'addInsumoReceta')
 	{
 
