@@ -891,7 +891,7 @@ $(document).ready(function(){
     
         // BUSCAR RECETA DEL PRODUCTO ELABORADO 
 
-        $('#buscar_prod_elaborado').keyup(function (e) {
+     $('#buscar_prod_elaborado').keyup(function (e) {
             /* Act on the event */
             e.preventDefault();
     
@@ -908,13 +908,14 @@ $(document).ready(function(){
     
                     success: function (response) {
                         
-                        console.log(response);
+                       
                         var info = JSON.parse(response);
                         
                         
                         if (info != 0) {
                             $("#msj_editar_receta").html("");
                             $("#nombre_receta_editar").attr('disabled', false);
+                            $("#idRecetaEditarR").val(info.id_receta);
                             $("#nombre_receta_editar").val(info.nombre);
                             $("#precio_receta_editar").attr('disabled', false);
                             $("#precio_receta_editar").val(info.precio_venta);
@@ -927,6 +928,7 @@ $(document).ready(function(){
                         } else {
 
                             $("#nombre_receta_editar").attr('disabled', true);
+                            $("#idRecetaEditarR").val('');
                             $("#nombre_receta_editar").val('');
                             $("#precio_receta_editar").attr('disabled', true);
                             $("#precio_receta_editar").val('');
@@ -947,7 +949,96 @@ $(document).ready(function(){
                 console.log("no action");
             }
     
-        }); 
+    }); 
+
+    // AGREGAR INSUMO A LA LISTA DE INSUMOS DE UNA RECETA EN EL FORMULARIO DE EDICION DE RECETAS
+    $('#agregarInsumoListaEditarR').click(function (e){
+        e.preventDefault;
+
+
+        var codigoInsumo = $('#SelectAddInsumoEditarR').val();
+        var cantidadInsumo = $('#cantidadInsumoModalEditarR').val();
+        var idReceta= $('#idRecetaEditarR').val();
+
+        var action = 'agregarInsumoEditarR';
+     
+    
+        $.ajax({
+            url: 'ajax.php',
+            type: 'POST',
+            async: true,
+            data: { action: action, idReceta:idReceta, idInsumo:codigoInsumo, cantidad:cantidadInsumo },    
+            
+            success: function (response) {
+            
+                if (response != 'Error') {
+     
+                    var info = JSON.parse(response);
+                   
+                    $('#lista_insumo_editar_receta').html(info);
+
+                    $('#agregarInsumoListaEditarR').slideUp();
+                    $('#cantidadInsumoModalEditarR').attr('disabled',true);
+                    $('#SelectAddInsumoEditarR').attr('disabled',true);
+                    
+                    $('#staticBackdropLabel').html('Ingrediente Agregado con Exito! ');
+    
+                } else {
+    
+                    console.log("Algo a Salido mal...");
+                } 
+            },
+        });
+    });
+
+
+    $('#add_ingrediente_editar_receta').click(function (e){
+        e.preventDefault; 
+        
+        
+        $('#agregarInsumoListaEditarR').slideDown();
+        $('#cantidadInsumoModalEditarR').attr('disabled',false);
+        $('#cantidadInsumoModalEditarR').val('');
+        $('#SelectAddInsumoEditarR').attr('disabled',false);
+        $('#SelectAddInsumoEditarR').val("");
+        $('#UnidadMedidaModalEditarR').val("");
+        
+        $('#staticBackdropLabel2').html('Seleccione el Ingrediente ');    
+    
+    });
+
+
+    // ACTUALIZAR LOS DATOS DE LA RECETA AL PRESIONAR EL BOTON "ACTUALIZAR"
+
+    $('#actualizar_receta').click(function (e){
+        e.preventDefault;
+
+        var action = 'actualizarDatosReceta';
+        var idReceta = $('#idRecetaEditarR').val();
+        var nombreReceta = $('#nombre_receta_editar').val();
+        var precioReceta = $('#precio_receta_editar').val();
+        var descReceta = $('#descrip_receta_editar').val();
+ 
+        $.ajax({
+            url: 'ajax.php',
+            type: 'POST',
+            async: true,
+            data: { action: action, idReceta:idReceta, nombreReceta:nombreReceta, precioReceta:precioReceta, descReceta:descReceta },    
+            
+            success: function (response) {
+            
+                if (response == 'ok') {
+     
+                    $('#msj_editar_receta').html('Receta Actualizada Exitosamente! ');
+                } else {
+    
+                    $('#msj_editar_receta').html('Algo Salio Mal...');
+                } 
+            },
+        });
+        
+
+    });
 
 
 // ----------------------------------------------------------------------------
@@ -1016,10 +1107,45 @@ function eliminarInsumoNuevaReceta(idInsumo, idReceta){
 
 }
 
+function eliminarInsumoEditarR(idInsumo, idReceta){
+
+    var action = 'eliminarInsumoEditarR';
+    $.ajax({
+        url: 'ajax.php',
+        type: 'POST',
+        async: true,
+        data: { action: action, idReceta:idReceta, idInsumo:idInsumo },    
+        
+        success: function (response) {
+
+            if (response != 'Sin Datos') {
+                
+                console.log(response);
+                
+                           
+                var info = JSON.parse(response);
+               
+                $('#lista_insumo_editar_receta').html('');
+                $('#lista_insumo_editar_receta').html(info);
+
+
+            } else {
+
+                $('#lista_insumo_editar_receta').html('');
+            } 
+        },
+    });
+
+
+}
 
 
 function actualizarMedidaUso(unidadUso){
     $('#UnidadMedidaModal').val(unidadUso);
+}
+
+function actualizarMedidaUsoEditarR(unidadUso){
+    $('#UnidadMedidaModalEditarR').val(unidadUso);
 }
 
 function agregarInsumoReceta(){

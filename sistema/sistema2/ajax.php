@@ -9,7 +9,72 @@
 
 if (!empty($_POST)) {
 
-	// BUSCAR RECETA PARA EDITAR 
+		// 	ACTUALIZAR DATOS DE LA RECETA DESDE EL FORMULARIO DE EDICION DE RECETAS
+
+		if ($_POST['action'] == 'actualizarDatosReceta')
+		{
+	
+			if (empty($_POST['idReceta'])) {
+				echo 'error';
+			}else{
+	
+				$idReceta = $_POST['idReceta'];
+				$nombreReceta = $_POST['nombreReceta'];
+				$precioReceta = $_POST['precioReceta'];
+				$descReceta = $_POST['descReceta'];
+				
+				$query_actualizar_datosR = mysqli_query($conn,"UPDATE producto as p INNER JOIN receta as r ON p.codproducto = r.id_receta 
+																SET p.descripcion = '$nombreReceta', p.precio = '$precioReceta', r.comentarios = '$descReceta' where p.codproducto = '$idReceta'");
+				
+				if ($query_actualizar_datosR) 
+				{
+
+					echo 'ok';
+	
+				}else{
+					echo 'error';
+				}
+				mysqli_close($conn);
+			}
+			exit;
+		}
+
+		// ELIMINAR INGREDIENTE DE LA RECETA DEL FORMULARIO DE EDICION DE PRODUCTOS ELABORADOS 
+		if($_POST['action'] == 'eliminarInsumoEditarR'){
+		
+			$idReceta = $_POST['idReceta'];
+			$idInsumo = $_POST['idInsumo'];
+	
+			$queryDelete = mysqli_query($conn,"CALL eliminarInsumoNuevaReceta('$idReceta','$idInsumo')");
+	
+			$resultado = mysqli_num_rows($queryDelete);
+	
+			$detalleTabla = '';
+	
+			if($resultado > 0){
+		
+				while($datos = mysqli_fetch_assoc($queryDelete)){
+	
+					$detalleTabla .= '
+									<tr>
+										<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['idInsumo'].'"></td>
+										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['nombreInsumo'].'</font></font></td>
+										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
+										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidadMedida'].'</font></font></td>
+										<td>
+											<div class="container d-inline d-center">
+											<button type="button" class="btn btn-outline-danger ml-6 " onclick="event.preventDefault(); eliminarInsumoEditarR('.$datos['idInsumo'].','.$idReceta.');"> <i class="fas fa-trash"></i>    Eliminar</button>															
+											</div>
+										</td>
+									</tr>' ;
+				}
+	
+				echo json_encode($detalleTabla,JSON_UNESCAPED_UNICODE); 
+	
+			}else{
+				echo 'Sin Datos';
+			}
+		}
 
 		// 	BUSCAR RECETAR PARA EDITAR EN FORMULARIO DE EDICION DE RECETAS
 
@@ -21,7 +86,9 @@ if (!empty($_POST)) {
 	
 				$nombreReceta = $_POST['nombreReceta'];
 	
-				$query = mysqli_query($conn,"SELECT * FROM receta as r WHERE r.estado = 1 AND r.nombre LIKE '%$nombreReceta'");
+				$query = mysqli_query($conn,"SELECT p.codproducto as id_receta, p.descripcion as nombre, p.precio as precio_venta, r.comentarios 
+												FROM producto as p INNER JOIN receta as r on p.codproducto = r.id_receta 
+												WHERE p.tipo_producto = 5 AND p.estado = 1 AND p.descripcion LIKE '%$nombreReceta'");
 				mysqli_close($conn);
 	
 				$resultado = mysqli_num_rows($query);
@@ -76,7 +143,9 @@ if (!empty($_POST)) {
 											<td class="textcenter">'.$datos['cantidad'].'</td>
 											<td class="textcenter">'.$datos['medida'].'</td>
 											<td class="">
-												<a href="#" class="link_delete" onclick="event.preventDefault(); del_insumo_receta('.$datos['idInsumo'].','.$idReceta.');"><i class="fas fa-trash-alt"></i></a>
+												<div class="container d-inline d-center">
+													<button type="button" class="btn btn-outline-danger ml-6 " onclick="event.preventDefault(); eliminarInsumoEditarR('.$datos['idInsumo'].','.$idReceta.');"> <i class="fas fa-trash"></i>    Eliminar</button>															
+												</div>
 											</td>
 										</tr>';
 					// fin while	
@@ -172,6 +241,45 @@ if (!empty($_POST)) {
 
 	}
 
+	// AGREGAR INSUMO A LA RECETA DEL FORMULARIO DE EDICION DE RECETA 
+		if($_POST['action'] == 'agregarInsumoEditarR'){
+
+			$idReceta = $_POST['idReceta'];
+			$idInsumo = $_POST['idInsumo'];
+			$cantidad = $_POST['cantidad'];
+	
+			$detalleTabla = '';
+			$query_agregarInsumo = mysqli_query($conn,"CALL addIngredienteReceta('$idReceta','$idInsumo','$cantidad')");
+			$resultado = mysqli_num_rows($query_agregarInsumo);
+	
+			if($resultado > 0){
+				
+				while($datos = mysqli_fetch_assoc($query_agregarInsumo)){
+	
+					$detalleTabla .= '
+									<tr>
+										<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['idInsumo'].'"></td>
+										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['nombreInsumo'].'</font></font></td>
+										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
+										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidadMedida'].'</font></font></td>
+										<td>
+											<div class="container d-inline d-center">
+											<button type="button" class="btn btn-outline-danger ml-6 " onclick="event.preventDefault(); eliminarInsumoEditarR('.$datos['idInsumo'].','.$idReceta.');"> <i class="fas fa-trash"></i>    Eliminar</button>															
+											</div>
+										</td>
+									</tr>' ;
+				}
+	
+				echo json_encode($detalleTabla,JSON_UNESCAPED_UNICODE); 
+	
+			}else{
+				echo "Error al Ejecutar el Precedimiento almacenado! ";
+			}
+			
+			exit;
+	
+		}
+	
 	// GUARDAR CABECERA DEL PRODUCTO ELABORADO
 
 	if($_POST['action'] == 'guardarNuevoProdElaborado'){
@@ -223,7 +331,6 @@ if (!empty($_POST)) {
 
 		exit;
 	} 
-
 
 
 

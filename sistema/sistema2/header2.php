@@ -1,4 +1,4 @@
-		<?php 
+ 		<?php 
 
 		if(empty($_SESSION['activa'])){
 		header('location: ../');
@@ -75,7 +75,7 @@
 				
 							</select>
 
-      				</div>
+      					</div>
 					  <div class="input-group mb-3">
 						<div class="input-group-prepend">
 							<span class="input-group-text" id="inputGroup-sizing-default">Unidad de Medida</span>
@@ -109,30 +109,60 @@
 						</div>					
                     </div>
                     <div class="modal-body">
-                        <div class="input-group mb-3">
-							<div class="input-group-prepend">
-								<span class="input-group-text" id="inputGroup-sizing-default">Insumo: </span>
-							</div>
-							<input type="text" id="NombreInsumoEditarNuevaR" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" disabled>
-						</div>
+					<div class="input-group mb-3">
+							<?php 
+
+							include '../../coneccion.php';
+
+							$query = mysqli_query($conn,"SELECT p.codproducto as idInsumo, p.descripcion as nombre, um.descripcion as unidadUso  
+														 FROM producto as p INNER JOIN unidades_medida as um ON p.unidad_medida = um.id 
+														 WHERE p.tipo_producto = 4 AND p.estado = 1");
+							mysqli_close($conn);
+							$result = mysqli_num_rows($query);
+							
+							$arrayUnidad = mysqli_fetch_array($query);
+							$unidadUsoModal =  $arrayUnidad["unidadUso"];
+
+							?>
+
+							<select class="custom-select" id="SelectAddInsumoEditarR" onchange="actualizarMedidaUsoEditarR('<?php echo $unidadUsoModal; ?>');">
+								<option selected>Seleccione el Insumo</option>
+							<?php 
+
+								if($result > 0)
+								{
+									while ($insumo = mysqli_fetch_array($query))
+									{
+										
+							?>	
+								<option  value="<?php echo $insumo["idInsumo"]; ?>"><?php echo $insumo["nombre"]; ?></option>
+							<?php
+									}
+								}
+
+							?>
+				
+							</select>
+
+      					</div>
 
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="inputGroup-sizing-default">Unidad de Medida</span>
 							</div>
-							<input type="text" id="UnidadMedidaModal" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" disabled>
+							<input type="text" id="UnidadMedidaModalEditarR" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" disabled>
 						</div>
 
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
 								<span class="input-group-text" id="inputGroup-sizing-default">Cantidad A Usar</span>
 							</div>
-							<input type="text" id="cantidadInsumoModal" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" require>
+							<input type="text" id="cantidadInsumoModalEditarR" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" require>
 						</div>
 
 						<div class="modal-footer ">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-exit"></i>Cerrar</button>
-							<button type="button" id="agregarInsumoLista" class="btn btn-primary"><i class="fas fa-plus"></i>  Actualizar</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-exit"></i> Cerrar</button>
+							<button type="button" id="agregarInsumoListaEditarR"  class="btn btn-primary"><i class="fas fa-plus"></i>  Agregar</button>
 						</div>
                 </div>
             </div>

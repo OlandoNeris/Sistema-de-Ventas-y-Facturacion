@@ -106,9 +106,10 @@
     <!-- FORMULARIO PARA EDITAR UNA RECETA EXISTENTE -->
     <div id="form_editar_receta"  class="container pr-5 pl-5">
 
-        <form action="" method="post" enctype="multipart/form-data">
+        <form   enctype="multipart/form-data">
         	<h1 class="h3 text-center">Editar Producto Elaborado </h1> 
 			    <div class="alert" id="msj_editar_receta"><?php echo isset($alert) ? $alert : '';?></div>
+          <input type="hidden" id="idRecetaEditarR"  name="idRecetaEditarR" value="" >
 			
         	<div class="form-row">
 				    <div class="form-group col-md-4">
@@ -122,7 +123,7 @@
             </div>
 
             <div class="form-group col-md-4">
-              <button type="submit" class="btn btn-primary font-bold mt-5 ml-3 " id="actualizar_receta" disabled><i class="fas fa-sync-alt"></i> Actualizar</button>
+              <button type="button" class="btn btn-primary font-bold mt-5 ml-3 " onclick="preventDefault();" id="actualizar_receta" disabled><i class="fas fa-sync-alt"></i> Actualizar</button>
             </div>
 
             <div class="form-group col-md-12">
@@ -135,7 +136,7 @@
 
         <div class="alert alert-primary mt-1 mb-1" role="alert">
             Lista de Ingredientes
-            <button type="button" class="btn btn-info ml-5" id="add_ingrediente_editar_receta" disabled><i class="fa fa-plus"></i> Agregar Ingrediente</button>
+            <button type="button" class="btn btn-info ml-5" id="add_ingrediente_editar_receta" data-toggle="modal" data-target="#staticBackdrop2" disabled><i class="fa fa-plus"></i> Agregar Ingrediente</button>
 			  </div>
             <table class="table table-striped table-hovertext-center p-4">
                 <thead>

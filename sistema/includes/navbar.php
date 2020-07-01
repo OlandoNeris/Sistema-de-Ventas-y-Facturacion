@@ -35,7 +35,7 @@
 					<a href="#">Productos</a>
 					<ul>
 						<li><a href="nuevo_producto.php">Nuevo Producto</a></li>
-						<li><a href="sistema2/registro_producto_elaborado.php">Nuevo Producto elaborado</a></li>
+						<li><a href="sistema2/registro_producto_elaborado.php">Productos elaborados</a></li>
 						<li><a href="lista_productos.php">Lista de Productos</a></li>
 					</ul>
 				</li>

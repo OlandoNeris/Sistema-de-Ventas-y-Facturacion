@@ -38,9 +38,10 @@
 				<th>DESCRIPCION</th>
 				<th>PRECIO</th>
 				<th>EXISTENCIA</th>
-				<th>
-				<?php 
+				<th> TIPO
 
+				<?php /*
+				
 				$query_proveedor = mysqli_query($conn,"SELECT codproveedor, proveedor FROM proveedor WHERE estado = 1 ORDER BY proveedor ASC");
 				$resultado = mysqli_num_rows($query_proveedor);
 
@@ -60,9 +61,12 @@
 						}
 					}
 
-					 ?>
+
+					 
 									
 				</select>
+				*/
+				?>
 				</th>
 				<th>FOTO</th>
 				<th>ACCIONES</th>
@@ -91,15 +95,14 @@
 				$desde = ($pagina - 1) * $porPagina;
 				$total_paginas = ceil($totalRegistros / $porPagina);
 
-				$query = mysqli_query($conn,"SELECT codproducto, 
-													descripcion, 
-													prov.proveedor as proveedor, 
-													precio, 
-													existencia, 
-													foto 
-											FROM producto as prod INNER JOIN proveedor as prov 
-											ON prod.proveedor = prov.codproveedor AND prod.estado = 1 
-											ORDER BY descripcion ASC LIMIT $desde,$porPagina");
+				$query = mysqli_query($conn,"SELECT p.codproducto , 
+													p.descripcion, 
+													p.precio,
+													p.stock,
+													tp.descripcion as tipo,
+													p.foto 
+											 FROM producto as p INNER JOIN tipo_producto as tp ON p.tipo_producto = tp.id WHERE p.estado = 1 
+											 ORDER BY descripcion ASC LIMIT $desde,$porPagina");
 				mysqli_close($conn);
 
 				$result = mysqli_num_rows($query);
@@ -115,8 +118,8 @@
 				<td><?php echo $datos['codproducto']; ?></td>
 				<td><?php echo $datos['descripcion']; ?></td>
 				<td class="celPrecio"><?php echo $datos['precio']; ?></td>
-				<td class="celExistencia"><?php echo $datos['existencia']; ?></td> 
-				<td><?php echo $datos['proveedor']; ?></td>
+				<td class="celExistencia"><?php echo $datos['stock']; ?></td> 
+				<td><?php echo $datos['tipo']; ?></td>
 				<td><img src="<?php echo $foto; ?>" alt="<?php echo $datos['descripcion']; ?>" style="width: 60px;"></td>
 				
 					<?php if ($_SESSION['idrol'] == 1) { ?>
