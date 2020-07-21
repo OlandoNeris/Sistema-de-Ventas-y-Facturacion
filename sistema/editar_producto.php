@@ -1,185 +1,195 @@
 <?php 
-	session_start();
 	
-
+  session_start();
+  
 	if ($_SESSION['idrol'] != 1 and $_SESSION['idrol'] != 2) {
 		header("location: ./");
 	} 
 
-	include '../coneccion.php';
+  include '../coneccion.php';
+
 
 	$idUsuario = $_SESSION['idUsuario'];
-
-
-// SI SE DA CLICK EN "ACTUALIZAR PRODUCTO" 	
-	if(!empty($_POST))
-	{
+	
+	// extraer datos del producto a travez del 'id' y mostrarlos en el formulario para editar
+	if(!empty($_REQUEST)){ 
+    
 		$alert = '';
 
-		if ( empty($_POST['nombre']) || empty($_POST['precio']) || $_POST['precio'] <= 0 || empty($_POST['id']) || empty($_POST['foto_actual']) || empty($_POST['foto_remove']))
-		{
-			$alert = ' <p class="msg_error">Todos los Campos son Obligatorios y Los Numero Positivos </p>';			
-		}else{			
+		// asigo el valor del GET a una variable
+		$idProducto = $_REQUEST['id'];
 
-			$codigo_producto = $_POST['id'];
-			$nombre  	  = $_POST['nombre'];
-			$precio       = $_POST['precio'];
-			$img_producto  = $_POST['foto_actual'];
-			$imgRemove    = $_POST['foto_remove'];
 
-			// MANEJO DE LA FOTO
+		// realizo un query para buscar los datos del producto a editar
+		$query_recovery = mysqli_query($conn,"SELECT p.codproducto as idProducto, p.descripcion, p.unidad_medida, um.descripcion as unidadTxt, tp.descripcion as tipoProductotxt, p.tipo_producto, p.precio, p.foto
+											  FROM producto as p INNER JOIN unidades_medida as um on p.unidad_medida = um.id
+											  INNER JOIN tipo_producto as tp ON p.tipo_producto = tp.id
+											  WHERE p.codproducto = '$idProducto' AND p.tipo_producto != 5 AND p.estado = 1");
+		$result = mysqli_num_rows($query_recovery);
+		
+		// si el resultado del query es mayor a 0, es decir, el producto existe y esta dado de alta en la base de datos
+		// asigno el resultado del query a variables para pooder manerjarlas, sino, redirecciono a la lista de productos.
 
-			$foto = $_FILES['foto'];
-			$nombre_foto = $foto['name'];
-			$type        = $foto['type'];
-			$url_temp    = $foto['tmp_name'];
+		if($result > 0){
+
+			// verificada la existencia, paso a guardar los valores de la consulta en variables de php para poder usarlas
 			
-			$update = '';
-
-			if ($nombre_foto != '') {
-				# code...
-				$destino = 'img/uploads/';
-				$img_nombre = 'img_'.md5(date('d-m-y H:m:s'));
-				$img_producto = $img_nombre.'.jpg';
-				$src = $destino.$img_producto;
-			}else{
-				if ($img_producto != $imgRemove) {
-					
-					$img_producto = 'img_producto.jpg';
-				}
-
-			}
-
-			$query_update = mysqli_query($conn,"UPDATE producto
-												SET descripcion = '$nombre',
-													precio      = $precio,
-													foto        = '$img_producto'
-												WHERE codproducto = $codigo_producto");
-			if($query_update){
-
-				if (($nombre_foto != '' && ($_POST['foto_actual'] != 'img_producto.jpg')) || ($_POST['foto_actual'] != $_POST['foto_remove'])) {
-					# code...
-					unlink('img/uploads/'.$_POST['foto_actual']);
-				}
-
-				if ($nombre_foto != ''){
-					move_uploaded_file($url_temp, $src);
-				}
-				$alert =  '<p class="msg_save">Producto Actualizado Con Exito!  </p>';
-			}else{
-				$alert =  '<p class="msg_error">No se Pudo Actualizar el Producto..  </p>';
-
-			}
-
-		}
-
-		}
-
-
-
-
-// 	TRAER E INFORMAR LOS DATOS DEL PRODUCTO  <----------------------
-
-	// 	validar producto
-
-	if (empty($_REQUEST['id'])) 
-	{
-		header("location: lista_productos.php");
-	}else{
-
-		$id_producto = $_REQUEST['id'];
-		if (!is_numeric($id_producto)) {
-			header("location: lista_productos.php");
-		}
-		// SE TRAEN LOS DATOS DEL PRODUCTO CON EL ID QUE VIENE EN EL REQUEST
-		$query_producto = mysqli_query($conn,"SELECT p.codproducto,descripcion, p.proveedor as idproveedor, pr.proveedor as nom_proveedor,precio,foto
-											  FROM producto as p INNER JOIN proveedor as pr ON p.proveedor = pr.codproveedor
-											  WHERE codproducto = $id_producto AND p.estado = 1");
-		$resultado = mysqli_num_rows($query_producto);
-
-
-		// VARIABLES PARA TRABAJAR EL ALMACENAMIENTO DE LA FOTO 
-		$foto = '';
-		$classRemove =  'notBlock';
-
-
-		// SI EL QUERY DEVUELVE RESULTADOS, HAGO LO SIGUIENTE 
-		if ($resultado > 0) {
+			$datos = mysqli_fetch_assoc($query_recovery);
 			
-			$datos_producto = mysqli_fetch_assoc($query_producto);
+			// print_r($datos);
+			
+			$idProducto 	= $datos['idProducto'];
+			$nombreProducto = $datos['descripcion'];
+			$unidadMedida   = $datos['unidad_medida'];
+			$unidadMedidaTxt = $datos['unidadTxt'];
+			$tipoProducto = $datos['tipo_producto'];
+			$tipoProductoTxt = $datos['tipoProductotxt'];
+			$precioProducto = $datos['precio'];
+			$foto 			= $datos['foto'];
 
-			if ($datos_producto['foto'] != 'img_producto.jpg') {
+			// almaceno la primera opcion del producto cuando se va a editar
+
+			$opcionMedidaUso ='<option value="'.$unidadMedida.'" selected >'.$unidadMedidaTxt.'</option>';
+			$opcionTipoProducto ='<option value="'.$tipoProducto.'" selected >'.$tipoProductoTxt .'</option>';
+
+			// manejo de la foto
+			$classRemove = 'notBlock';
+			$fotoImg = '';
+
+			if($foto != 'img_producto.jpg')
+			{
 				$classRemove = '';
-				$foto = '<img id="img" src="img/uploads/'.$datos_producto['foto'].'" alt="Producto">';
+				$fotoImg = '<img id="img" src="img/uploads/'.$foto.'" alt="Imagen producto">';
+
 			}
 
-		}else{ // SINO, SE REDIRECCIONA A LA LISTA DE PRODUCTOS 
+			// a partir de aca queda asignar los valores a los campos en el formulario y luego actualizar los datos 
+
+		}else{
 			header("location: lista_productos.php");
 		}
+		
+
+        mysqli_close($conn);
+
 
 	}
 
+	// queda pendiente el post para actualizar los datos 
 
- ?>
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	
-	<?php include "includes/scripts.php"; ?>
 
-	<title>Editar Producto</title>
+
+    <?php include "includes/scripts.php"; ?>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+	<title>Sistema Ventas</title>
 </head>
-
-
-
-<body>
+<body style="background-color:#B4B4B4;" >
 
 	<?php include "includes/header.php"; ?>
 
 	<section id="container">
-
-		<div class="form_registro">
-
-			<h1><i class="fas fa-cubes"></i> Editar Producto</h1>
-			<hr>
-			<div class="alert"><?php echo isset($alert) ? $alert : '';?></div>
-
-			<form action="" method="post" enctype="multipart/form-data">
-				<?php // CAMPOS PARA REEMPLAZAR LA FOTO NUEVA  ?>
-				<input type="hidden" name="id" value="<?php echo $id_producto;?>">
-				<input type="hidden" id="foto_actual" name="foto_actual" value="<?php echo $datos_producto['foto'];?>">
-				<input type="hidden" id="foto_remove" name="foto_remove" value="<?php echo $datos_producto['foto'];?>">
-
-
-				<label for="nombre" >Nombre</label>
-				<input type="text" name="nombre" id="nombre" placeholder="Ingrese Nombre del Producto " value="<?php echo $datos_producto['descripcion'];?>">
-
-				<label for="precio" >Precio</label>
-				<input type="number" name="precio" id="precio" min=0.01 step="any" placeholder="Ingrese precio del Producto" value="<?php echo $datos_producto['precio'];?>">
-
-				<div class="photo">
-					<label for="foto">Foto</label>
-   				    <div class="prevPhoto">
-    				<span class="delPhoto <?php echo $classRemove;?>">X</span>
-    				<label for="foto"></label>
-    				<?php echo $foto; ?>
-    				</div>
-    				<div class="upimg">
-        			<input type="file" name="foto" id="foto">
-        			</div>
-        			<div id="form_alert"></div>
-				</div>
-
-				<button type="submit" class="btn_enviar"><i class="fas fa-save"></i>  Actualizar Producto</button>
-
-			</form>
-
-		</div>
-
+		<h1>Nuevo Producto</h1>
 	</section>
 
-	<?php include "includes/footer.php"; ?>
+    <div style="width: 50%;" class="container container-fluid form_nuevo_prod" >
+
+        <form action="" method="post" enctype="multipart/form-data">
+        	<h1 class="h3 text-center">Editar de Producto </h1> 
+       		<div class="alert" id="msjUsuario"><?php echo isset($alert) ? $alert : '';?></div>
+			
+			<input type="hidden"  id="idProductoEditar" value="<?php echo $idProducto;?>" name="idProductoEditar" style="Display:none;" required>
+		  	<div class="form-row">
+
+				<div class="form-group col-md-6">
+					<label for="nombreProductoEditar">Nombre del Producto</label>
+					<input type="text" class="form-control" value="<?php echo $nombreProducto;?>" id="nombreProductoEditar" name="nombreProductoEditar" placeholder="Nombre del Producto" required> 
+				</div>
+
+         	    <?php // barra dee opciones para seleccionar TIPO PRODUCTO 
+              		include '../coneccion.php';
+				      $query_tipoProd = mysqli_query($conn,"SELECT id as idtipo_prod, descripcion FROM tipo_producto WHERE id != 5 ORDER BY descripcion ASC");
+				      $resultado = mysqli_num_rows($query_tipoProd);  ?>				
+				
+				<div class="form-group col-md-6">
+					<label for="tipoProductoEditar">Tipo Producto</label>
+					<select name="tipoProductoEditar" id="tipoProductoEditar" class="form-control">
+					<?php echo $opcionTipoProducto; ?>
+					
+					<?php   					
+						if ($resultado > 0) {
+						# code...
+						while ($tipo_prod = mysqli_fetch_array($query_tipoProd)) {
+						# code...
+					?>
+					<option value="<?php echo $tipo_prod['idtipo_prod'];?>" ><?php echo $tipo_prod['descripcion'];?></option>   
+						
+					<?php 	}	} //CIERRE DEL WHILE ?> 
+					</select>
+				</div>
+
+    		</div>
+
+    <div class="form-row">
+
+        <div class="form-group col-md-6">
+          <label for="unidadUsoProdEditar">Unidad de Uso</label>
+          <select name="unidadUsoProdEditar" id="unidadUsoProdEditar" class="form-control">
+		  	<?php echo $opcionMedidaUso; ?>	
+            <option value="1" >Gramo (Gr)</option>
+            <option value="4">Mililitro (Ml)</option>
+            <option value="5">Unidad (Un)</option>
+          </select>
+        </div>
+
+        <div class="form-group col-md-6">
+          <label for="precioProductoEditar">Precio</label>
+          <input type="number" class="form-control" name="precioProductoEditar" value="<?php echo $precioProducto;?>" id="precioProductoEditar" placeholder="Precio del Producto" required> 
+        </div>
+    </div>
+
+    <div class="form-row" id="contenedorFoto">
+
+        <div class="photo display-block form-group col-md-6">
+					
+          <label for="foto align-center">Ingresar Foto</label>
+   				
+           <div class="prevPhoto">
+    				  <span class="delPhoto <?php echo $classRemove; ?>">X</span>
+    				  <label for="foto"></label>
+						<?php echo $fotoImg; ?>
+    				</div>
+
+    				<div class="upimg">
+        			<input type="file" name="foto" id="foto">
+        		</div>
+
+        		<div id="form_alert"></div>
+				</div>
+
+        
+        <div class="form-group col-md-4">
+            <button type="submit" id="guardarNuevoProd" class="btn btn-primary m-5 p-5 font-bold"><i class="fa fa-sync-alt"></i> Actualizar Producto</button>
+        </div>
+
+    </div>
+
+    </div>
+ 
+    </form>
+    </div>
+
+
+    <?php include "includes/footer.php"; ?>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 </body>
 </html>

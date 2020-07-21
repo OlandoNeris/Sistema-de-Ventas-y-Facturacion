@@ -44,6 +44,10 @@
 
         if($query_insert)
         {
+          if($nombre_foto != '')
+          {
+            move_uploaded_file($url_temp,$src);
+          }
           $alert =  '<p class="msg_save">Producto Creado Con Exito!  </p>';
         }else{
           $alert =  '<p class="msg_error">No se Pudo Crear el Producto..  </p>';

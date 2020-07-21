@@ -24,8 +24,7 @@
 
 	<section id="container_listado">
 		<h1><i class="fas fa-address-card"></i>  Listado de Productos</h1>
-		<a href="registro_producto.php" class="btn_nuevo"><i class="fas fa-plus"></i>  Nuevo Producto</a>
-		
+
 		<form action="buscar_productos.php" method="get" class="form_buscar">
 			<input type="text" name="busqueda" id="busqueda" placeholder="Buscar">
 			<button type="submit" class="btn_buscar"><i class="fas fa-search fa-lg"></i></button>
@@ -112,6 +111,13 @@
 					while($datos = mysqli_fetch_array($query))
 					{
 						$foto = 'img/uploads/'.$datos['foto'];
+						$link = '';
+						if ($datos['tipo'] == 'Producto' || $datos['tipo'] == 'Insumo'){
+							$link = 'editar_producto.php?id='.$datos['codproducto'];
+							
+						}else{
+							$link = 'sistema2/registro_producto_elaborado.php?id='.$datos['codproducto'];
+						}
 
 			 ?>
 			<tr class="row<?php echo $datos['codproducto']; ?>">
@@ -124,9 +130,9 @@
 				
 					<?php if ($_SESSION['idrol'] == 1) { ?>
 				<td>		 
-					<a class="link_edit add_product" product="<?php echo $datos['codproducto']; ?>" href="#" style="color:#0B8AB5;"><i class="fas fa-plus"></i> Agregar</a> 
+					<a class="link_edit " product="<?php echo $datos['codproducto']; ?>" href="#" style="color:#0B8AB5;"><i class="fas fa-plus"></i> Agregar</a> 
 					 | 
-					<a class="link_edit" href="editar_producto.php?id=<?php echo $datos['codproducto']; ?>"><i class="fas fa-user-edit"></i> Editar</a> 
+					<a class="link_edit" href="<?php echo $link;?>"><i class="fas fa-user-edit"></i> Editar</a> 
 					
 
 					|  <a class="link_delete eliminar_producto" product="<?php echo $datos['codproducto']; ?>" href="#"><i class="fas fa-user-times"></i>  Eliminar</a>
