@@ -48,7 +48,7 @@ if (!empty($_POST)) {
 
 		$producto_id = $_POST['producto'];
 
-		$query = mysqli_query($conn,"SELECT codproducto, descripcion,precio, existencia FROM producto 
+		$query = mysqli_query($conn,"SELECT codproducto, descripcion,precio FROM producto 
 									WHERE (codproducto = $producto_id OR descripcion LIKE '%$producto_id%')
 									AND estado = 1");
 

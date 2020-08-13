@@ -12,9 +12,6 @@
 
 
   $idUsuario = $_SESSION['idUsuario'];
-  
-
-
 
 ?>
 
@@ -69,11 +66,6 @@
             <div class="form-group col-md-4">
               <button type="submit" id="guardarNuevoProductoElaborado" class="btn btn-primary font-bold mt-5 ml-3 "><i class="fa fa-save"></i> Guardar Producto</button>
             </div>
-
-           	<div class="form-group col-md-12">
-              <label for="descNuevoProdElaborado">Descripcion / Observaciones</label>
-              <input type="text" class="form-control" name="descNuevoProdElaborado" id="descNuevoProdElaborado" placeholder="Ingrese una breve Descripcion del Producto..." required> 
-				    </div>
 
           </div>           
 

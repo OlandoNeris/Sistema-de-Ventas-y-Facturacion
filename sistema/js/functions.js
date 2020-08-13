@@ -674,19 +674,14 @@ $(document).ready(function(){
                         $("#guardarNuevoProductoElaborado").attr('disabled',true);
                         $("#btnAgregarIngredienteNuevoProdElaborado").attr('disabled', true);
                         $("#precioNuevoProdElaborado").val(info.precio);  
-                        $("#precioNuevoProdElaborado").attr('disabled', true);
-                        $("#descNuevoProdElaborado").val(info.comentarios);
-                        $("#descNuevoProdElaborado").attr('disabled', true);    
+                        $("#precioNuevoProdElaborado").attr('disabled', true); 
                                            
                     }else{
                         $("#msjErrorNuevaReceta").html('');
                         $("#guardarNuevoProductoElaborado").attr('disabled', false);
                         $("#precioNuevoProdElaborado").val('');
                         $("#precioNuevoProdElaborado").attr('disabled', false);
-                        $("#descNuevoProdElaborado").val('');
-                        $("#descNuevoProdElaborado").attr('disabled', false);
-                      
-                    
+                         
                     } 
 
                 }
@@ -706,16 +701,15 @@ $(document).ready(function(){
         var action = "guardarNuevoProdElaborado";
         var nombre = $("#nombreNuevoProdElaborado").val();
         var precio = $("#precioNuevoProdElaborado").val();
-        var descripcion = $("#descNuevoProdElaborado").val();
         var idUser =  $("#idUsuario").val();
         
-        if(action != '' && nombre != '' && precio != '' && descripcion != '' && idUser != '' ){
+        if(action != '' && nombre != '' && precio != '' && idUser != '' ){
             
             $.ajax({
                 url: 'ajax.php',
                 type: 'POST',
                 async: true,
-                data: { action: action, nombre:nombre, precio:precio, descripcion:descripcion, idUser:idUser},
+                data: { action: action, nombre:nombre, precio:precio, idUser:idUser},
 
                 success: function (response) {
                 

@@ -102,10 +102,10 @@
 													p.foto 
 											 FROM producto as p INNER JOIN tipo_producto as tp ON p.tipo_producto = tp.id WHERE p.estado = 1 
 											 ORDER BY descripcion ASC LIMIT $desde,$porPagina");
-				mysqli_close($conn);
+				
 
 				$result = mysqli_num_rows($query);
-
+				mysqli_close($conn);
 				if($result > 0)
 				{
 					while($datos = mysqli_fetch_array($query))
@@ -129,9 +129,7 @@
 				<td><img src="<?php echo $foto; ?>" alt="<?php echo $datos['descripcion']; ?>" style="width: 60px;"></td>
 				
 					<?php if ($_SESSION['idrol'] == 1) { ?>
-				<td>		 
-					<a class="link_edit " product="<?php echo $datos['codproducto']; ?>" href="#" style="color:#0B8AB5;"><i class="fas fa-plus"></i> Agregar</a> 
-					 | 
+				<td>
 					<a class="link_edit" href="<?php echo $link;?>"><i class="fas fa-user-edit"></i> Editar</a> 
 					
 

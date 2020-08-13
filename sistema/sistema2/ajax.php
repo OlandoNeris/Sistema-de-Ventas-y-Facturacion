@@ -287,10 +287,9 @@ if (!empty($_POST)) {
 		
         $nombre = $_POST['nombre'];
         $precio = $_POST['precio'];
-        $descripcion = $_POST['descripcion'];
 		$idUser =  $_POST['idUser'];
 		
-		$sql = mysqli_query($conn,"CALL guardarCabeceraReceta('$nombre','$precio','$idUser','sin foto','$descripcion')");
+		$sql = mysqli_query($conn,"CALL guardarCabeceraReceta('$nombre','$precio','$idUser')");
 		if($sql){
 			$datos = mysqli_fetch_assoc($sql);
 			echo json_encode($datos, JSON_UNESCAPED_UNICODE);
@@ -309,8 +308,7 @@ if (!empty($_POST)) {
 
 			$prodElaborado = $_POST['prodElaborado'];
 
-			$query = mysqli_query($conn,"SELECT p.descripcion, p.precio, r.comentarios FROM producto as p 
-									     INNER JOIN receta as r ON p.codproducto = r.id_receta 
+			$query = mysqli_query($conn,"SELECT p.descripcion, p.precio FROM producto as p 									     
 										WHERE p.tipo_producto = 5 AND p.estado = 1 AND p.descripcion LIKE '%$prodElaborado'");
 			mysqli_close($conn);
 
