@@ -183,13 +183,13 @@ if (!empty($_POST)) {
 
 				$detalleTabla .= '
 								<tr>
-									<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['idInsumo'].'"></td>
-									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['nombreInsumo'].'</font></font></td>
+									<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['cod_insumo'].'"></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['descripcion'].'</font></font></td>
 									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
-									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidadMedida'].'</font></font></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidad_medida'].'</font></font></td>
 									<td>
 										<div class="container d-inline d-center">
-											<button type="button" class="btn btn-outline-danger ml-6 " onclick="eliminarInsumoNuevaReceta('.$datos['idInsumo'].','.$datos['recetaId'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
+											<button type="button" class="btn btn-outline-danger ml-6 " onclick="eliminarInsumoNuevaReceta('.$datos['cod_insumo'].','.$datos['id_receta'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
 										</div>
 									</td>
 								</tr>' ;
@@ -209,9 +209,12 @@ if (!empty($_POST)) {
 		$idInsumo = $_POST['idInsumo'];
 		$cantidad = $_POST['cantidad'];
 
+	
+		
 		$detalleTabla = '';
-		$query_agregarInsumo = mysqli_query($conn,"CALL addIngredienteReceta('$idReceta','$idInsumo','$cantidad')");
+		$query_agregarInsumo = mysqli_query($conn,"CALL add_detalle_receta($idReceta,$idInsumo,$cantidad)");
 		$resultado = mysqli_num_rows($query_agregarInsumo);
+
 
 		if($resultado > 0){
 			
@@ -219,13 +222,13 @@ if (!empty($_POST)) {
 
 				$detalleTabla .= '
 								<tr>
-									<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['idInsumo'].'"></td>
-									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['nombreInsumo'].'</font></font></td>
+									<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['cod_insumo'].'"></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['descripcion'].'</font></font></td>
 									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
-									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidadMedida'].'</font></font></td>
+									<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidad_medida'].'</font></font></td>
 									<td>
 										<div class="container d-inline d-center">
-											<button type="button" class="btn btn-outline-danger ml-6 " onclick="eliminarInsumoNuevaReceta('.$datos['idInsumo'].','.$datos['recetaId'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
+											<button type="button" class="btn btn-outline-danger ml-6 " onclick="eliminarInsumoNuevaReceta('.$datos['cod_insumo'].','.$datos['id_receta'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
 										</div>
 									</td>
 								</tr>' ;
@@ -309,7 +312,7 @@ if (!empty($_POST)) {
 			$prodElaborado = $_POST['prodElaborado'];
 
 			$query = mysqli_query($conn,"SELECT p.descripcion, p.precio FROM producto as p 									     
-										WHERE p.tipo_producto = 5 AND p.estado = 1 AND p.descripcion LIKE '%$prodElaborado'");
+										WHERE p.tipo_producto = 5 AND p.estado = 1 AND p.descripcion LIKE '%$prodElaborado%'");
 			mysqli_close($conn);
 
 			$resultado = mysqli_num_rows($query);
@@ -351,6 +354,9 @@ if (!empty($_POST)) {
 			$idUnidadUso_array = mysqli_fetch_assoc($query_idUnidadUso);
 			$idUnidadUso  = $idUnidadUso_array['id'];
 
+
+			echo $idReceta.$codInsumo.$cantidad.$idUnidadUso;
+			exit;
 			// llamo al procedimiento almacenado, pasandole los parametros 
 
 			$query_detalle_receta = mysqli_query($conn,"CALL add_detalle_receta($idReceta,$codInsumo,$cantidad,$idUnidadUso)");

@@ -694,7 +694,7 @@ $(document).ready(function(){
     }); 
   
     // GUARDAR NUEVO PRODUCTO ELABORADO
- 
+    
     $("#guardarNuevoProductoElaborado").click(function (e) {
 
         e.preventDefault();
@@ -716,10 +716,12 @@ $(document).ready(function(){
                     if (response != 'Error') {
                         var info = JSON.parse(response);
                         
-
+                        $('#msjErrorNuevaReceta').html('Producto Guardado con Exito! ');
                         $('#idReceta').val(info.idReceta);
                         $('#guardarNuevoProductoElaborado').slideUp();
                         $("#btnAgregarIngredienteNuevoProdElaborado").attr('disabled', false);
+                        $('#nombreNuevoProdElaborado').attr('disabled', true);
+                        $('#precioNuevoProdElaborado').attr('disabled', true);
    
                     } else {
 
@@ -842,7 +844,7 @@ $(document).ready(function(){
 
      
 
-     // AGREGAR FUNCIONALIDAD AL BOTON DEL MODAL 
+     // AGREGAR FUNCIONALIDAD AL BOTON DEL MODAL AGREGAR INSUMO A LA RECETA NUEVA
      $('#agregarInsumoLista').click(function (e){
         e.preventDefault;
 
@@ -863,7 +865,8 @@ $(document).ready(function(){
             success: function (response) {
             
                 if (response != 'Error') {
-     
+                    
+             
                     var info = JSON.parse(response);
                    
                     $('#listaIngredientesNuevaReceta').html(info);
@@ -872,7 +875,7 @@ $(document).ready(function(){
                     $('#cantidadInsumoModal').attr('disabled',true);
                     $('#SelectAddInsumo').attr('disabled',true);
                     
-                    $('#staticBackdropLabel').html('Ingrediente Agregado con Exito! ');
+                    $('#staticBackdropLabel').html('Ingrediente Agregado con Exito! '); 
     
                 } else {
     
