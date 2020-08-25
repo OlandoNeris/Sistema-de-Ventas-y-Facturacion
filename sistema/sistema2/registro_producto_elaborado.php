@@ -115,13 +115,8 @@
             </div>
 
             <div class="form-group col-md-4">
-              <button type="button" class="btn btn-primary font-bold mt-5 ml-3 " onclick="preventDefault();" id="actualizar_receta" disabled><i class="fas fa-sync-alt"></i> Actualizar</button>
+              <button type="button" class="btn btn-primary font-bold mt-5 ml-3 " id="actualizar_receta" disabled><i class="fas fa-sync-alt"></i> Actualizar</button>
             </div>
-
-            <div class="form-group col-md-12">
-              <label for="descrip_receta_editar">Descripcion / Observaciones</label>
-              <input type="text" class="form-control" name="descrip_receta_editar" id="descrip_receta_editar" placeholder="Ingrese una breve Descripcion del Producto..." required disabled> 
-				    </div>
 
        		</div> 
 		    </form>

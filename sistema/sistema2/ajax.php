@@ -21,14 +21,12 @@ if (!empty($_POST)) {
 				$idReceta = $_POST['idReceta'];
 				$nombreReceta = $_POST['nombreReceta'];
 				$precioReceta = $_POST['precioReceta'];
-				$descReceta = $_POST['descReceta'];
 				
-				$query_actualizar_datosR = mysqli_query($conn,"UPDATE producto as p INNER JOIN receta as r ON p.codproducto = r.id_receta 
-																SET p.descripcion = '$nombreReceta', p.precio = '$precioReceta', r.comentarios = '$descReceta' where p.codproducto = '$idReceta'");
+				$query_actualizar_datosR = mysqli_query($conn,"UPDATE producto as p 
+																SET p.descripcion = '$nombreReceta', p.precio = '$precioReceta' where p.codproducto = $idReceta");
 				
 				if ($query_actualizar_datosR) 
 				{
-
 					echo 'ok';
 	
 				}else{
@@ -55,18 +53,19 @@ if (!empty($_POST)) {
 		
 				while($datos = mysqli_fetch_assoc($queryDelete)){
 	
+
 					$detalleTabla .= '
-									<tr>
-										<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['idInsumo'].'"></td>
-										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['nombreInsumo'].'</font></font></td>
-										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
-										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidadMedida'].'</font></font></td>
-										<td>
-											<div class="container d-inline d-center">
-											<button type="button" class="btn btn-outline-danger ml-6 " onclick="event.preventDefault(); eliminarInsumoEditarR('.$datos['idInsumo'].','.$idReceta.');"> <i class="fas fa-trash"></i>    Eliminar</button>															
-											</div>
-										</td>
-									</tr>' ;
+					<tr>
+						<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['cod_insumo'].'"></td>
+						<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['descripcion'].'</font></font></td>
+						<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
+						<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidad_medida'].'</font></font></td>
+						<td>
+							<div class="container d-inline d-center">
+								<button type="button" class="btn btn-outline-danger ml-6 " onclick="eliminarInsumoEditarR('.$datos['cod_insumo'].','.$datos['id_receta'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
+							</div>
+						</td>
+					</tr>' ;
 				}
 	
 				echo json_encode($detalleTabla,JSON_UNESCAPED_UNICODE); 
@@ -86,9 +85,10 @@ if (!empty($_POST)) {
 	
 				$nombreReceta = $_POST['nombreReceta'];
 	
-				$query = mysqli_query($conn,"SELECT p.codproducto as id_receta, p.descripcion as nombre, p.precio as precio_venta, r.comentarios 
-												FROM producto as p INNER JOIN receta as r on p.codproducto = r.id_receta 
-												WHERE p.tipo_producto = 5 AND p.estado = 1 AND p.descripcion LIKE '%$nombreReceta'");
+				$query = mysqli_query($conn,"SELECT p.codproducto as id_receta, p.descripcion as nombre, p.precio as precio_venta 
+											FROM producto as p
+											WHERE p.estado = 1 AND tipo_producto = 5 AND p.descripcion LIKE '$nombreReceta%'"
+				);
 				mysqli_close($conn);
 	
 				$resultado = mysqli_num_rows($query);
@@ -252,25 +252,27 @@ if (!empty($_POST)) {
 			$cantidad = $_POST['cantidad'];
 	
 			$detalleTabla = '';
-			$query_agregarInsumo = mysqli_query($conn,"CALL addIngredienteReceta('$idReceta','$idInsumo','$cantidad')");
+			$query_agregarInsumo = mysqli_query($conn,"CALL add_detalle_receta('$idReceta','$idInsumo','$cantidad')");
 			$resultado = mysqli_num_rows($query_agregarInsumo);
 	
 			if($resultado > 0){
 				
 				while($datos = mysqli_fetch_assoc($query_agregarInsumo)){
 	
+
 					$detalleTabla .= '
-									<tr>
-										<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['idInsumo'].'"></td>
-										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['nombreInsumo'].'</font></font></td>
-										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
-										<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidadMedida'].'</font></font></td>
-										<td>
-											<div class="container d-inline d-center">
-											<button type="button" class="btn btn-outline-danger ml-6 " onclick="event.preventDefault(); eliminarInsumoEditarR('.$datos['idInsumo'].','.$idReceta.');"> <i class="fas fa-trash"></i>    Eliminar</button>															
-											</div>
-										</td>
-									</tr>' ;
+					<tr>
+						<td type="hidden" style="display:none;" name="idInsumo" value="'.$datos['cod_insumo'].'"></td>
+						<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;" colspan="2">'.$datos['descripcion'].'</font></font></td>
+						<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['cantidad'].'</font></font></td>
+						<td><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">'.$datos['unidad_medida'].'</font></font></td>
+						<td>
+							<div class="container d-inline d-center">
+								<button type="button" class="btn btn-outline-danger ml-6 " onclick="eliminarInsumoEditarR('.$datos['cod_insumo'].','.$datos['id_receta'].');" > <i class="fas fa-trash"></i>    Eliminar</button>															
+							</div>
+						</td>
+					</tr>' ;
+
 				}
 	
 				echo json_encode($detalleTabla,JSON_UNESCAPED_UNICODE); 

@@ -1005,10 +1005,10 @@ $(document).ready(function(){
     });
 
 
-    // ACTUALIZAR LOS DATOS DE LA RECETA AL PRESIONAR EL BOTON "ACTUALIZAR"
+    // ACTUALIZAR EL NOMBRE Y PRECIO DE LA RECETA AL PRESIONAR EL BOTON "ACTUALIZAR"
 
     $('#actualizar_receta').click(function (e){
-        e.preventDefault;
+        e.preventDefault();
 
         var action = 'actualizarDatosReceta';
         var idReceta = $('#idRecetaEditarR').val();
@@ -1023,7 +1023,7 @@ $(document).ready(function(){
             data: { action: action, idReceta:idReceta, nombreReceta:nombreReceta, precioReceta:precioReceta, descReceta:descReceta },    
             
             success: function (response) {
-            
+
                 if (response == 'ok') {
      
                     $('#msj_editar_receta').html('Receta Actualizada Exitosamente! ');
