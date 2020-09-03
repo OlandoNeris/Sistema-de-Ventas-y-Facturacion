@@ -49,10 +49,7 @@
 					</ul>
 				</li>
 				<li class="principal">
-					<a href="#">Caja </a>
-					<ul>
-						<li><a href="#"> Caja   </a></li>
-					</ul>
+					<a href="caja.php">Caja </a>
 				</li>
 			</ul>
 		</nav>
