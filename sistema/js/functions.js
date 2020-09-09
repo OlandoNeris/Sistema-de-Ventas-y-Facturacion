@@ -1038,6 +1038,45 @@ $(document).ready(function(){
     });
 
 
+    $('#aperturaNuevaCaja').click(function (e){
+        
+        
+        e.preventDefault();
+        
+        
+        
+        var idUser = $('#userIdCaja').val();
+        var action = 'aperturaCaja';
+
+        $.ajax({
+            url: 'ajax.php',
+            type: 'POST',
+            async: true,
+            data: { action:action, idUser:idUser},    
+            
+            success: function (response) {
+                if (response == 0 )
+                {   // si entra por aca, el usuario ya tiene una caja abierta y en estado activa 
+                    alert("Ya tiene Una Caja Abierta! ");
+                }else{ // si se pudo abrir la caja, este hara lo siguiente 
+                    $('#formDatosCaja').show();
+                    var infoCaja = JSON.parse(response);
+
+                    $('#numeroCaja').html(infoCaja.id_caja);
+                    $('#datosCajero').html(infoCaja.nombre+" "+infoCaja.apellido);
+                    $('#aperturaNuevaCaja').attr('disabled',true);
+                    $('#btnCierreCaja').attr('disabled',false);
+                    
+                }
+               
+            },
+        });
+
+    });
+
+
+
+
 // ----------------------------------------------------------------------------
 }); // FIN READY DOCUMENT 
 

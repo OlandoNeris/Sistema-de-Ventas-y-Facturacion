@@ -9,6 +9,32 @@
 
 if (!empty($_POST)) {
 
+
+
+
+	if ($_POST['action'] == 'aperturaCaja') 
+	{
+		$idUser = $_POST['idUser'];
+		// primero verifico que el usuario no tenga ninguna caja abierta para poder abrir una 
+
+		$query_apertura = mysqli_query($conn, "SELECT * FROM cajas WHERE cajas.id_usuario = '$idUser' AND cajas.estado = 1");
+		$resultado = mysqli_num_rows($query_apertura);
+
+		if($resultado == 0) // si no tiene cajas abiertas, se llamara al procedimiento almacenado 
+		{
+			$query_procedimiento_apertura = mysqli_query($conn,"CALL aperturaCaja('$idUser')");
+			$datos = $datos = mysqli_fetch_assoc($query_procedimiento_apertura);
+            echo json_encode($datos, JSON_UNESCAPED_UNICODE);	
+			
+		}else{
+			echo 0;
+		}
+
+	
+
+		exit;		
+	}
+
 		// VALIDAR NUEVO PRODUCTO A GUARDAR
 		if ($_POST['action'] == 'ValidarNuevoProducto') 
 		{	
