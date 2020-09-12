@@ -82,17 +82,15 @@
 			<thead>
 				<tr>
 					<th width="100px">Codigo</th>
-					<th>Descripcion</th>
-					<th>Existencia</th>
+					<th coldspan="2">Nombre Producto</th>
 					<th width="100px">Cantidad</th>
 					<th class="textright">Precio</th>
 					<th class="textright">Precio Total</th>
-					<th> Accion</th>
+					<th colspan="2"> Accion</th>
 				</tr>
 				<tr>
-					<td><input type="text" name="txt_cod_producto" id="txt_cod_producto"></td>
-					<td id="txt_descripcion">-</td>
-					<td id="txt_existencia">-</td>
+					<td id="txt_cod_producto" id="txt_cod_producto">-</td>
+					<td><input type="text" name="txt_nombre_producto" id="txt_nombre_producto"></td>
 					<td><input type="text" name="txt_cant_producto" id="txt_cant_producto" value="0" min="1" disabled></td>
 					<td id="txt_precio" class="textright">0.00</td>
 					<td id="txt_precio_total" class="textright">0.00</td>

@@ -75,8 +75,7 @@ if (!empty($_POST)) {
 		$producto_id = $_POST['producto'];
 
 		$query = mysqli_query($conn,"SELECT codproducto, descripcion,precio FROM producto 
-									WHERE (codproducto = $producto_id OR descripcion LIKE '%$producto_id%')
-									AND estado = 1");
+									 WHERE (descripcion LIKE '%$producto_id') AND tipo_producto != 4 AND estado = 1");
 
 		mysqli_close($conn);
 
@@ -88,7 +87,10 @@ if (!empty($_POST)) {
 			exit();
 		}
 		echo "error";
+		
+		
 		exit();
+
 	}
 
 
@@ -225,13 +227,61 @@ if (!empty($_POST)) {
 	// AGREGAR PRODUCTO AL DETALLE TEMPORAL 
 	if ($_POST['action'] == 'addProductoDetalle')
 	{
+
 		if (empty($_POST['producto']) || empty($_POST['cantidad'])) {
 			echo 'error';
 		}else{
 
+
 			$codproducto = $_POST['producto'];
 			$cantidad  	 = $_POST['cantidad'];
 			$token		 = md5($_SESSION['idUsuario']);
+
+			// trabajare a partir de aca para cambiar la funcionalidad del boton
+
+			$query_tipo_prod = mysqli_query($conn, "SELECT tipo_producto as tipo FROM producto as p WHERE p.codproducto = '$codproducto'");
+			$resultado_tipo_prod = mysqli_fetch_assoc($query_tipo_prod);
+
+			if( $resultado_tipo_prod['tipo'] == 5 )
+			{
+				echo "hola mundo este es un producto elaborado";
+			}else{ // esto hara si es un producto que no es elaborado
+
+				
+				$query_stock = mysqli_query($conn,"SELECT stock FROM producto WHERE codproducto = '$codproducto'");
+				$resultado_stock_prod = mysqli_fetch_assoc($query_stock);
+				$resultado_stock_prod['stock'];
+
+				if(($resultado_stock_prod['stock'] - $cantidad) < 0 )
+				{
+					echo "sin stock";
+					exit;
+				}
+
+				
+			}
+
+			exit;
+
+
+			echo json_encode($resultado_tipo_prod,JSON_UNESCAPED_UNICODE);
+		
+			
+			
+			
+			
+
+
+
+
+
+			// ----------------------------------------------------------------
+
+
+
+			/* a partir de aca ya es el codigo que anda y debo ajustar a las modificaciones que voy a realizar
+
+
 
 			// la tabla configuracion se crea para hacer las facturas y demas...
 
@@ -305,6 +355,10 @@ if (!empty($_POST)) {
 			}else{
 				echo 'error';
 			}
+
+			*/
+
+
 			mysqli_close($conn);
 		}
 		exit;

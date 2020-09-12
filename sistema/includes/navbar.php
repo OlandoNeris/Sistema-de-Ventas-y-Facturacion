@@ -40,12 +40,11 @@
 					</ul>
 				</li>
 				<li class="principal">
-					<a href="#">Ventas </a>
+					<a href="#">Operaciones de Caja </a>
 					<ul>
-						<li><a href="nueva_venta.php">Venta</a></li>
-						<li><a href=".php">Factura Compra</a></li>
-						<li><a href="nueva_venta.php">Retiro Efectivo</a></li>
-						<li><a href="lista_ventas.php"> Ventas </a></li>
+						<li><a href="nueva_venta.php">Nueva Venta</a></li>
+						<li><a href="">Factura Compra</a></li>
+						<li><a href="">Retiro Efectivo</a></li>
 					</ul>
 				</li>
 				<li class="principal">

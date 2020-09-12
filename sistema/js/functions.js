@@ -205,6 +205,7 @@ $(document).ready(function(){
 
             // SI LA RESPUESTA ES DISTINTA DE CERO, MOSTRAMOS LOS DATOS Y OCULTAMOS EL BOTON AGREGAR
                 var datos = $.parseJSON(response);
+                console.log(datos);
                 $('#idcliente').val(datos.idcliente);
                 $('#nom_cliente').val(datos.nombre);
                 $('#tel_cliente').val(datos.telefono);
@@ -280,17 +281,17 @@ $(document).ready(function(){
     });
 
     // BUSCAR PRODUCTO CON EL CODIGO 
-    $('#txt_cod_producto').keyup(function(e) {
+    $('#txt_nombre_producto').keyup(function(e) {
         /* Act on the event */
         e.preventDefault();
-
-
+        
         var producto = $(this).val();
         var action  = 'infoProducto';
-
-
+     
+        
         if (producto != '') 
         {
+  
             $.ajax({
             url: 'ajax.php',
             type: 'POST',
@@ -299,9 +300,13 @@ $(document).ready(function(){
 
             success: function(response){
 
+                console.log(response);
+
+                
                 if (response != 'error') 
                 {
                     var info = JSON.parse(response);
+                    $('#txt_cod_producto').html(info.codproducto);
                     $('#txt_descripcion').html(info.descripcion);
                     $('#txt_existencia').html(info.existencia);
                     $('#txt_cant_producto').val('1');
@@ -316,7 +321,7 @@ $(document).ready(function(){
 
                 }else{
 
-                    $('#txt_descripcion').html('-');
+                    $('#txt_cod_producto').html('-');
                     $('#txt_existencia').html('-');
                     $('#txt_cant_producto').val('0');
                     $('#txt_precio').html('0.00');
@@ -327,12 +332,14 @@ $(document).ready(function(){
 
                     // OCULTAR BOTON DE AGREGAR 
                      $('#add_producto_venta').slideUp();
-                }                
-            },
+                }  
+                
+                
+            }, 
 
 
-           }); 
-        }        
+           });  
+        }      
         
 
     });
@@ -367,7 +374,7 @@ $(document).ready(function(){
 
         if ($('#txt_cant_producto').val() > 0) 
         {
-            var codproducto = $('#txt_cod_producto').val();
+            var codproducto = $('#txt_cod_producto').html();
             var cantidad    = $('#txt_cant_producto').val();
             var action      = 'addProductoDetalle';
 
@@ -381,6 +388,20 @@ $(document).ready(function(){
                     
                     if (response != 'error') 
                     {
+                        console.log(response);
+
+                        if(response == 'sin stock')
+                        {
+                            alert("Producto Sin Stock");
+                            $('#txt_cod_producto').html(''); 
+                            $('#txt_nombre_producto').val('');
+                            $('#txt_cant_producto').val('0');
+                            $('#txt_precio').html('0.00');
+                            $('#txt_precio_total').html('0.00');
+                        }
+
+                        /*
+                        
                         var info = JSON.parse(response);
 
                         // asignar el detalle a las clases en el formulario de la factura
@@ -402,7 +423,9 @@ $(document).ready(function(){
 
                         // ocultar boton agregar
                         $('#add_producto_venta').slideUp();
- 
+                        
+                        */
+                        
 
                     }else{
                         console.log('sin datos');
