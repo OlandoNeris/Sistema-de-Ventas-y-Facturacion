@@ -300,9 +300,7 @@ $(document).ready(function(){
 
             success: function(response){
 
-                console.log(response);
-
-                
+  
                 if (response != 'error') 
                 {
                     var info = JSON.parse(response);
@@ -388,8 +386,7 @@ $(document).ready(function(){
                     
                     if (response != 'error') 
                     {
-                        console.log(response);
-
+                        // si es
                         if(response == 'sin stock')
                         {
                             alert("Producto Sin Stock");
@@ -398,10 +395,8 @@ $(document).ready(function(){
                             $('#txt_cant_producto').val('0');
                             $('#txt_precio').html('0.00');
                             $('#txt_precio_total').html('0.00');
-                        }
+                        }else{
 
-                        /*
-                        
                         var info = JSON.parse(response);
 
                         // asignar el detalle a las clases en el formulario de la factura
@@ -412,8 +407,7 @@ $(document).ready(function(){
                         // vaciar los campos para ingresar un nuevo producto a la lista 
 
                         $('#txt_cod_producto').val(''); 
-                        $('#txt_descripcion').html('-');
-                        $('#txt_existencia').html('-');
+                        $('#txt_nombre_producto').val('');
                         $('#txt_cant_producto').val('0');
                         $('#txt_precio').html('0.00');
                         $('#txt_precio_total').html('0.00');
@@ -423,9 +417,8 @@ $(document).ready(function(){
 
                         // ocultar boton agregar
                         $('#add_producto_venta').slideUp();
-                        
-                        */
-                        
+
+                        }   
 
                     }else{
                         console.log('sin datos');
@@ -1305,14 +1298,10 @@ function del_producto_detalle(correlativo){
                 // vaciar los campos para ingresar un nuevo producto a la lista 
 
                 $('#txt_cod_producto').val(''); 
-                $('#txt_descripcion').html('-');
-                $('#txt_existencia').html('-');
+                $('#txt_nombre_producto').val('');
                 $('#txt_cant_producto').val('0');
                 $('#txt_precio').html('0.00');
                 $('#txt_precio_total').html('0.00');
-
-                // bloquear cantidad
-                $('#txt_cant_producto').attr('disabled','disabled');
 
                 // ocultar boton agregar
                 $('#add_producto_venta').slideUp();

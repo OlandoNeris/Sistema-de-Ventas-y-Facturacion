@@ -238,13 +238,43 @@ if (!empty($_POST)) {
 			$token		 = md5($_SESSION['idUsuario']);
 
 			// trabajare a partir de aca para cambiar la funcionalidad del boton
+			// primero busco el tipo del producto que es para saber por donde ir 
 
 			$query_tipo_prod = mysqli_query($conn, "SELECT tipo_producto as tipo FROM producto as p WHERE p.codproducto = '$codproducto'");
 			$resultado_tipo_prod = mysqli_fetch_assoc($query_tipo_prod);
 
-			if( $resultado_tipo_prod['tipo'] == 5 )
+			if( $resultado_tipo_prod['tipo'] == 5 ) // si es un producto elaborado, entrara por aca
 			{
-				echo "hola mundo este es un producto elaborado";
+				
+				// buscar la receta con el id 
+
+				$query = mysqli_query($conn,"SELECT r.cod_insumo as idInsumo, r.cantidad, p.stock
+				FROM detalle_receta as r INNER JOIN producto as p ON r.cod_insumo = p.codproducto  
+				WHERE r.id_receta = $codproducto");
+
+				$datos = array(); //  contenedor para las filas del query
+
+				// guardado del query en el array "$datos"
+				while($row = mysqli_fetch_array($query))
+				{
+					$datos[] = array(
+					'idInsumo' => $row['idInsumo'],
+					'cantidad' => $row['cantidad'],
+					'stock' => $row['stock'],
+					);
+				} 
+
+				// recorrida y evaluacion de si el stock sera suficiene para afrontar el pedido 
+				for($i=0; $i <= (count($datos)-1); $i++)
+				{
+					$aux_cant_pedido = $datos[$i]['stock'] * $cantidad;
+					if($datos[$i]['stock'] < $aux_cant_pedido)
+					{
+						echo "sin stock";
+						exit; // si no tiene stock cualquiera de los insumos de la receta para afrontar el pedido,
+					}		  // directamente lo sacara de la operacion y no seguira. 
+				}				
+
 			}else{ // esto hara si es un producto que no es elaborado
 
 				
@@ -254,33 +284,13 @@ if (!empty($_POST)) {
 
 				if(($resultado_stock_prod['stock'] - $cantidad) < 0 )
 				{
-					echo "sin stock";
-					exit;
+					echo "sin stock"; // si no tiene stock cualquiera de los insumos de la receta para afrontar el pedido,
+					exit;			  // directamente lo sacara de la operacion y no seguira.
 				}
-
 				
 			}
 
-			exit;
-
-
-			echo json_encode($resultado_tipo_prod,JSON_UNESCAPED_UNICODE);
-		
-			
-			
-			
-			
-
-
-
-
-
 			// ----------------------------------------------------------------
-
-
-
-			/* a partir de aca ya es el codigo que anda y debo ajustar a las modificaciones que voy a realizar
-
 
 
 			// la tabla configuracion se crea para hacer las facturas y demas...
@@ -356,7 +366,7 @@ if (!empty($_POST)) {
 				echo 'error';
 			}
 
-			*/
+		
 
 
 			mysqli_close($conn);
