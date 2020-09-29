@@ -205,7 +205,7 @@ $(document).ready(function(){
 
             // SI LA RESPUESTA ES DISTINTA DE CERO, MOSTRAMOS LOS DATOS Y OCULTAMOS EL BOTON AGREGAR
                 var datos = $.parseJSON(response);
-                console.log(datos);
+             
                 $('#idcliente').val(datos.idcliente);
                 $('#nom_cliente').val(datos.nombre);
                 $('#tel_cliente').val(datos.telefono);
@@ -496,9 +496,10 @@ $(document).ready(function(){
                     
                     if (response != 'error') 
                     {
+                        console.log(response);
                         //si entra aca, generó la venta y recargara la pagina
                         var info = JSON.parse(response);
-                        //console.log(info);
+                        
 
                         generarPDF(info.codcliente, info.nofactura);
 
@@ -1100,6 +1101,78 @@ $(document).ready(function(){
 // ---- BLOQUE DE FUNCIONES ---------------
 
 
+// Validar Apertura de Caja 
+
+ function validarAperturaCaja(idUsuario){
+    $('#formulario_ventas').hide(); // Oculto el Formulario para ventas 
+    
+    var action = 'validarCaja'; 
+
+    $.ajax({
+        url: 'ajax.php',
+        type: 'POST',
+        async: true,
+        data: { action: action, idUser: idUsuario},
+
+        success: function (response) {
+            
+            if(response != 0){
+                    // si el usuario tiene una Caja Abierta, este hara lo siguiente 
+                    
+                $('#formulario_ventas').show();    
+            }else{
+                alert("Debe Abrir Una Caja Para Poder Vender! ");
+            }
+        }
+        
+    });
+    
+ }
+
+
+// Mostar Formulario de Caja cuando el Usuario ya tiene una caja abierta
+
+function mostrarFormCajaAbierta(idUsuario){
+
+    
+    
+    if(idUsuario > 0){
+        
+        var action = 'buscarCaja'; 
+
+        $.ajax({
+            url: 'ajax.php',
+            type: 'POST',
+            async: true,
+            data: { action: action, idUser: idUsuario},
+    
+            success: function (response) {
+                
+                if(response != 0){
+                        // si el usuario tiene una Caja Abierta, este hara lo siguiente 
+                        
+                        $('#formDatosCaja').show();
+                        var infoCaja = JSON.parse(response);
+
+                        $('#numeroCaja').html(infoCaja.id_caja);
+                        $('#datosCajero').html(infoCaja.nombre+" "+infoCaja.apellido);
+                        $('#totalIngresos').html(infoCaja.ingresos);
+                        $('#totalEgresos').html(infoCaja.egresos);
+                        $('#totalCaja').html(infoCaja.ingresos - infoCaja.egresos);
+                        $('#aperturaNuevaCaja').attr('disabled',true);
+                        $('#btnCierreCaja').attr('disabled',false);
+                        
+        
+                }
+            }
+            
+        });
+    }
+
+}
+
+
+
 // BUSCAR DETALLER DE RECETA PARA EDITAR 
 
 function buscarRecetaEditar(idReceta){
@@ -1286,8 +1359,9 @@ function del_producto_detalle(correlativo){
         success: function(response){
             
             if (response != 'error') 
-            {
-
+            {   
+    
+                console.log(response);
                 var info = JSON.parse(response);
 
                 // asignar el detalle a las clases en el formulario de la factura

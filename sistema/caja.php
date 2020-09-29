@@ -1,7 +1,9 @@
 <?php 
 	
 	session_start();
+	$idUser = $_SESSION['idUsuario'];
 	
+	//$consulta_caja = mysqli_query($conn,"");
 
 ?>
 
@@ -17,7 +19,7 @@
 
 	<title>Sistema Ventas</title>
 </head>
-<body >
+<body onload="mostrarFormCajaAbierta(<?php echo $idUser; ?>)">
 	
 	<input type="hidden" name="userId" id="userIdCaja" value="<?php echo $_SESSION['idUsuario']; ?>">
 
@@ -74,7 +76,7 @@
 					<div class="card text-white bg-success mb-4 col-4 col align-self-center" >
 						<div class="card-header">Total de Ingresos</div>
 						<div class="card-body">
-						<h5 class="card-title">0</h5>
+						<h5 class="card-title" id="totalIngresos">0</h5>
 
 						</div>
 					</div>
@@ -82,14 +84,14 @@
 					<div class="card text-white bg-danger mb-4 col-4 col align-self-center" >
 						<div class="card-header">Total Egresos</div>
 						<div class="card-body">
-						<h5 class="card-title"> - 0</h5>
+						<h5 class="card-title" id="totalEgresos"> - 0</h5>
 						</div>
 					</div>
 
 					<div class="card text-white bg-primary mb-4 col-4 col align-self-center">
 						<div class="card-header">Total Caja</div>
 						<div class="card-body">
-						<h5 class="card-title "> 0 </h5>
+						<h5 class="card-title " id="totalCaja"> 0 </h5>
 						</div>
 					</div>
 

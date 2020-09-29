@@ -10,7 +10,57 @@
 if (!empty($_POST)) {
 
 
+	// Validar que haya caja abierta para poder vender productos 
 
+	if ($_POST['action'] == 'validarCaja') 
+	{
+		$idUser = $_POST['idUser'];
+		// primero verifico que el usuario no tenga ninguna caja abierta para poder abrir una 
+
+		$query_apertura = mysqli_query($conn, "SELECT 1 FROM cajas WHERE cajas.id_usuario = '$idUser' AND cajas.estado = 1");
+		$resultado = mysqli_num_rows($query_apertura);
+
+		if($resultado > 0) // si tiene cajas abiertas, se envian los datos para rellenar el formulario
+		{
+
+			
+            echo 1;
+			
+		}else{
+			echo 0;
+		} 
+
+	
+
+		exit;		
+	}
+
+
+	if ($_POST['action'] == 'buscarCaja') 
+	{
+		$idUser = $_POST['idUser'];
+		// primero verifico que el usuario no tenga ninguna caja abierta para poder abrir una 
+
+		$query_apertura = mysqli_query($conn, "SELECT c.id_caja, u.nombre, u.apellido, c.apertura, 
+													  c.total_ingresos as ingresos, c.total_egresos as egresos 
+												FROM cajas as c INNER JOIN usuario as u ON c.id_usuario = u.idusuario
+												WHERE c.id_usuario = '$idUser' AND c.estado = 1");
+		$resultado = mysqli_num_rows($query_apertura);
+
+		if($resultado > 0) // si tiene cajas abiertas, se envian los datos para rellenar el formulario
+		{
+
+			$datos = $datos = mysqli_fetch_assoc($query_apertura);
+            echo json_encode($datos, JSON_UNESCAPED_UNICODE);
+			
+		}else{
+			echo 0;
+		} 
+
+	
+
+		exit;		
+	}
 
 	if ($_POST['action'] == 'aperturaCaja') 
 	{
@@ -238,7 +288,7 @@ if (!empty($_POST)) {
 			$token		 = md5($_SESSION['idUsuario']);
 
 			// trabajare a partir de aca para cambiar la funcionalidad del boton
-			// primero busco el tipo del producto que es para saber por donde ir 
+			// primero busco el tipo del producto que es para saber por donde ir  
 
 			$query_tipo_prod = mysqli_query($conn, "SELECT tipo_producto as tipo FROM producto as p WHERE p.codproducto = '$codproducto'");
 			$resultado_tipo_prod = mysqli_fetch_assoc($query_tipo_prod);
@@ -267,13 +317,28 @@ if (!empty($_POST)) {
 				// recorrida y evaluacion de si el stock sera suficiene para afrontar el pedido 
 				for($i=0; $i <= (count($datos)-1); $i++)
 				{
-					$aux_cant_pedido = $datos[$i]['stock'] * $cantidad;
+					$aux_cant_pedido = $datos[$i]['cantidad'] * $cantidad;
 					if($datos[$i]['stock'] < $aux_cant_pedido)
 					{
 						echo "sin stock";
 						exit; // si no tiene stock cualquiera de los insumos de la receta para afrontar el pedido,
 					}		  // directamente lo sacara de la operacion y no seguira. 
-				}				
+
+				} // a partir de aca, hago el descuento de los insumos. ya que si salio del if tiene suficiente stock
+
+				
+				// descontar insumos y agregar el stock en el producto elaborado
+				for($i=0; $i <= (count($datos)-1); $i++)
+				{ // descuenta el stock en los insumos de la receta 
+					$aux_cant_pedido = $datos[$i]['cantidad'] * $cantidad;
+					$aux_cod_insumo = $datos[$i]['idInsumo'];
+					
+					$query_descuento_insumo = mysqli_query($conn,"UPDATE producto SET stock = stock - $aux_cant_pedido 
+																  WHERE codproducto = '$aux_cod_insumo'");
+				}
+				// agrega la cantidad del pedido al stock del producto 
+				$query_insert_stock = mysqli_query($conn,"UPDATE producto SET stock = stock + $cantidad 
+																  WHERE codproducto = '$codproducto'");
 
 			}else{ // esto hara si es un producto que no es elaborado
 
@@ -482,6 +547,49 @@ if (!empty($_POST)) {
 			$query_iva = mysqli_query($conn,"SELECT iva FROM configuracion");
 			$resultado_iva = mysqli_num_rows($query_iva);
 
+			// aca tengo que devolver las cantidades a los insumos 
+			
+			$query_devolver_insumos = mysqli_query($conn,"SELECT codproducto, cantidad FROM detalle_temp
+														 WHERE correlativo = '$id_detalle'");
+			$resultado = mysqli_fetch_assoc($query_devolver_insumos);
+			
+			// extraigo el id y la cantidad del pedido 
+
+			$cod_prod_elaborado = $resultado['codproducto'];
+			$cantidad_prod_elaborado = $resultado['cantidad'];
+
+			$query = mysqli_query($conn,"SELECT r.cod_insumo as idInsumo, r.cantidad, p.stock
+			FROM detalle_receta as r INNER JOIN producto as p ON r.cod_insumo = p.codproducto  
+			WHERE r.id_receta = $cod_prod_elaborado");
+
+			$datos = array(); //  contenedor para las filas del query
+
+			// guardado del query en el array "$datos"
+			while($row = mysqli_fetch_array($query))
+			{
+				$datos[] = array(
+				'idInsumo' => $row['idInsumo'],
+				'cantidad' => $row['cantidad'],
+				'stock' => $row['stock'],
+				);
+			} 
+			
+			// devolver insumos y descontar el stock en el producto elaborado
+			for($i=0; $i <= (count($datos)-1); $i++)
+			{ // devuelve el stock en los insumos de la receta 
+				$aux_cant_pedido = $datos[$i]['cantidad'] * $cantidad_prod_elaborado;
+				$aux_cod_insumo = $datos[$i]['idInsumo'];
+				
+				$query_descuento_insumo = mysqli_query($conn,"UPDATE producto SET stock = stock + $aux_cant_pedido 
+															  WHERE codproducto = '$aux_cod_insumo'");
+			}
+			// quita la cantidad del pedido al stock del producto 
+			$query_insert_stock = mysqli_query($conn,"UPDATE producto SET stock = stock - $cantidad_prod_elaborado
+															  WHERE codproducto = '$cod_prod_elaborado'");
+
+			
+			
+			// --------------------------------------------------
 
 
 			$query_detalle_temp = mysqli_query($conn,"CALL del_detalle_temp($id_detalle,'$token')");
@@ -584,11 +692,12 @@ if (!empty($_POST)) {
 		$token		 = md5($_SESSION['idUsuario']);
 		$idusuario   = $_SESSION['idUsuario'];
 
-		$query = mysqli_query($conn,"SELECT * FROM detalle_temp WHERE token_user = '$token'");
-		$result = mysqli_num_rows($query);
+		$query_dt_tmp = mysqli_query($conn,"SELECT * FROM detalle_temp WHERE token_user = '$token'");
+		$result = mysqli_num_rows($query_dt_tmp);
 
 		if ($result > 0) 
-		{
+		{	
+		
 			$query_emitir = mysqli_query($conn, "CALL procesar_venta($idusuario,$codcliente,'$token')");
 			$resultado_venta = mysqli_num_rows($query_emitir);
 
