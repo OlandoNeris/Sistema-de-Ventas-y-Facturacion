@@ -3,7 +3,7 @@
 $usuario = "root";
 $servidor = "localhost";
 $contra = "";
-$basedatos = "pizzeria";
+$basedatos = "sistema_ventas";
 
 $conn = @mysqli_connect($servidor, $usuario, $contra, $basedatos);
 
